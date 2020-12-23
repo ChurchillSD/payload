@@ -1,0 +1,10 @@
+{
+    "Name": "Payload",
+    "Description": "Payload gamemode for BF3:VU",
+    "Authors": [ "Hector", "Oswald" ],
+    "Version": "0.0.1",
+    "HasVeniceEXT": true,
+    "Dependencies": {
+        "veniceext": "^1.0.0"
+    }
+}
