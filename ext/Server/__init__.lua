@@ -34,9 +34,9 @@ end
 Events:Subscribe('Engine:Update', function(deltaTime, simulationDeltaTime)
     local near_cart = players_near_cart()
     if near_cart > 0 then
-        payload_transform.trans.y =  65.002731 + (((payload_transform.trans.y - 65.002731) + 0.01) % 1)
+        common.update_payload_server(near_cart)
         NetEvents:Broadcast('msg_move_payload', payload_transform)
-        common.move_payload(payload_transform, 'Server')
+        common.move_payload('Server', payload_transform)
     end
 end)
 

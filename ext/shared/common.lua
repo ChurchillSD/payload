@@ -1,12 +1,19 @@
 
+waypoints = require("__shared/waypoints.lua")
+
 local M = {}
 
 payload_GUID = "86109A07-8794-11E0-9345-9992712BCB5C" -- Bag
-payload_start_pos = Vec3(58.085938, 65.002731, 229.448242)
 payload_entity = nil
 payload_transform = nil
 
+waypoint_index = 1
+payload_waypoints = nil
+
 function M.create_payload(client_or_server, transform_changy)
+    if payload_waypoints == nil then
+        payload_waypoints = waypoints.get_waypoints()
+    end
     -- print("Called create payloadddd")
     -- print(SharedUtils:GetLevelName())
     if (SharedUtils:GetLevelName() == "Levels/MP_Subway/MP_Subway" or  SharedUtils:GetLevelName() == "MP_Subway") and SharedUtils:GetCurrentGameMode() == "ConquestSmall0" then
@@ -16,8 +23,7 @@ function M.create_payload(client_or_server, transform_changy)
 
         if payloadData ~= nil then
             payload_transform = LinearTransform()
-            payload_transform.trans = payload_start_pos
-            print(type(payload_transform))
+            payload_transform.trans = payload_waypoints[1] -- Start position
 
             if transform_changy ~= nil then
                 payload_transform = transform_changy
@@ -42,6 +48,33 @@ function M.create_payload(client_or_server, transform_changy)
         end
 
     end
+end
+
+function move_towards_lin(from, to, max)
+    if to:Distance(from) < max then
+        return to
+    end
+    local dir = (to - from):Normalize()
+    local new_vec = from + (dir * max)
+    return new_vec
+end
+
+
+function M.update_payload_server(num_players_near)
+    local prev_wp = waypoints[waypoint_index]
+    local next_wp = waypoints[waypoint_index + 1]
+    local delta = 0.1
+    payload_transform.trans = move_towards_lin(payload_transform.trans, next_wp, delta) -- payload_transform.trans:MoveTowards(next_wp, delta)
+
+    if payload_transform.trans:Distance(next_wp) < delta then
+        if waypoint_index == #waypoints - 1 then
+            print("We're at the last waypoint you bum")
+        else
+            waypoint_index = waypoint_index + 1
+        end
+    end
+
+    -- payload_transform.trans.y =  65.002731 + (((payload_transform.trans.y - 65.002731) + 0.01) % 1)
 end
 
 function M.move_payload(client_or_server, transform)
