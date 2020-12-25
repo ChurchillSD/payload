@@ -45,3 +45,9 @@ Events:Subscribe('Level:Loaded', function(levelName, gameMode)
     print("create payload")
     common.create_payload('Server')
 end)
+
+NetEvents:Subscribe('PayloadPosition', function(player, data)
+    if data.x == payload_transform.trans.x and data.z == payload_transform.trans.z then
+        common.move_payload('Server', payload_transform)
+    end
+end)

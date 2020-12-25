@@ -4,6 +4,7 @@ waypoints = require("__shared/waypoints.lua")
 local M = {}
 
 payload_GUID = "86109A07-8794-11E0-9345-9992712BCB5C" -- Bag
+-- payload_GUID = "7BE361E8-605D-11E0-AA6C-B4A65D6212CD" -- Fences crash clients :(
 payload_entity = nil
 payload_transform = nil
 
@@ -63,7 +64,7 @@ end
 function M.update_payload_server(num_players_near)
     local prev_wp = waypoints[waypoint_index]
     local next_wp = waypoints[waypoint_index + 1]
-    local delta = 0.1
+    local delta = 0.025
     payload_transform.trans = move_towards_lin(payload_transform.trans, next_wp, delta) -- payload_transform.trans:MoveTowards(next_wp, delta)
 
     if payload_transform.trans:Distance(next_wp) < delta then
@@ -81,6 +82,19 @@ function M.move_payload(client_or_server, transform)
     if payload_entity ~= nil then
         --print("DESTROY!")
         payload_entity:Destroy()
+    end
+
+    if client_or_server == "Client" then
+        -- Do two raycasts, up and down
+        
+        local from = transform.trans:Clone()
+        from.y = from.y + 1
+        local to = transform.trans:Clone()
+        to.y = 0
+        local ground = RaycastManager:Raycast(from, to, RayCastFlags.DontCheckCharacter)
+
+        transform.trans = ground.position
+        NetEvents:Send('PayloadPosition', ground.position)
     end
     
     -- print("Transform.trans: ")
