@@ -85,8 +85,6 @@ function M.move_payload(client_or_server, transform)
     end
 
     if client_or_server == "Client" then
-        -- Do two raycasts, up and down
-        
         local from = transform.trans:Clone()
         from.y = from.y + 1
         local to = transform.trans:Clone()
