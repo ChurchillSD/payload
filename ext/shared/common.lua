@@ -82,9 +82,8 @@ function M.update_payload_server(num_players_near, simulationDeltaTime)
 
     -- Check if we have reached the next waypoint and update waypoint index
     if payload_transform.trans == next_wp then
-        if waypoint_index == #waypoints - 1 then
-            print("We're at the last waypoint.")
-        else
+        -- Check if we are not at the last waypoint
+        if waypoint_index ~= #waypoints - 1 then
             waypoint_index = waypoint_index + 1
         end
     end
@@ -92,12 +91,6 @@ function M.update_payload_server(num_players_near, simulationDeltaTime)
 end
 
 function M.move_payload(client_or_server, transform)
-
-    -- IF payload exists delete it.
-    if payload_entity ~= nil then
-        payload_entity:Destroy()
-    end
-
     -- Perform raycast on client to stick payload to ground
     if client_or_server == "Client" then
 
@@ -117,10 +110,20 @@ function M.move_payload(client_or_server, transform)
         NetEvents:Send('PayloadPosition', ground.position)
     end
     
-    -- Create new payload at updated position.
-    transform_new = LinearTransform()
-    transform_new.trans = transform.trans
-    M.create_payload(client_or_server, transform_new)
+    -- IF payload exists move it
+    if payload_entity ~= nil then
+        -- To move the entity, we must first cast it to a SpatialEntity
+        local spacial_payload = SpatialEntity(payload_entity)
+
+        -- Move the bag
+        spacial_payload.transform = transform
+    else
+        -- Create new payload at updated position.
+        transform_new = LinearTransform()
+        transform_new.trans = transform.trans
+        M.create_payload(client_or_server, transform_new)
+    end
+
 end
 
 return M
