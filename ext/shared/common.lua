@@ -4,8 +4,8 @@ waypoints = require("__shared/waypoints.lua")
 local M = {}
 
 payload_GUID = "86109A07-8794-11E0-9345-9992712BCB5C" -- Bag
-payload_basespeed = 0.02 -- Measured in dist per tick
-payload_multiplier = 0.002 -- Measured in dist per tick
+payload_basespeed = 1.2 -- Measured in dist per second
+payload_speed_bonus = 0.12 -- Measured in dist per second
 payload_max_pushers = 5 -- Maximum people pushing the cart before payload speed is capped
 payload_push_radius = 5 -- Area around the payload that counts as pushing it.
 
@@ -65,23 +65,23 @@ function move_towards_lin(from, to, max)
     return new_vec
 end
 
-function M.update_payload_server(num_players_near)
+function M.update_payload_server(num_players_near, simulationDeltaTime)
     local prev_wp = waypoints[waypoint_index]
     local next_wp = waypoints[waypoint_index + 1]
-    local dist_per_tick = payload_basespeed -- Base payload distance to move each tick.
+    local dist_per_sec = payload_basespeed -- Base payload distance to move each tick.
 
     -- Payload speed changes based on num players near cart.
     if num_players_near > payload_max_pushers then
-        dist_per_tick = payload_basespeed + (payload_max_pushers * payload_multiplier)
-    else
-        dist_per_tick = payload_basespeed + (num_players_near * payload_multiplier)
+        num_players_near = payload_max_pushers
     end
 
+    dist_per_sec = payload_basespeed + (num_players_near * payload_speed_bonus)
+
     -- Get new trans for the payload
-    payload_transform.trans = move_towards_lin(payload_transform.trans, next_wp, dist_per_tick) -- payload_transform.trans:MoveTowards(next_wp, delta)
+    payload_transform.trans = move_towards_lin(payload_transform.trans, next_wp, (dist_per_sec * simulationDeltaTime)) -- payload_transform.trans:MoveTowards(next_wp, delta)
 
     -- Check if we have reached the next waypoint and update waypoint index
-    if payload_transform.trans:Distance(next_wp) < dist_per_tick then
+    if payload_transform.trans == next_wp then
         if waypoint_index == #waypoints - 1 then
             print("We're at the last waypoint.")
         else
