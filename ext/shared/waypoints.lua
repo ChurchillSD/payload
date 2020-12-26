@@ -10,9 +10,13 @@ mp_subway_waypoints = {
 }
 
 function M.get_waypoints()
+    waypoints = nil
+
+    -- MP_Lake NOT METRO! TODO: Make sure this is MP lake not default metro
     if (SharedUtils:GetLevelName() == "Levels/MP_Subway/MP_Subway" or  SharedUtils:GetLevelName() == "MP_Subway") and SharedUtils:GetCurrentGameMode() == "ConquestSmall0" then
         waypoints = mp_subway_waypoints
     end
+
     return waypoints
 end
 
