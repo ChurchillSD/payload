@@ -20,13 +20,20 @@ Events:Subscribe('Level:Loaded', function(levelName, gameMode)
             print(cp_guid)
 
             local cp_obj_data = ReferenceObjectData(ResourceManager:SearchForInstanceByGuid(cp_guid))
-        
+            
+            local cp_trans = payload_waypoints[wp_index]
+
+            if cp[3] ~= nil then
+                -- Adding offset to the cp
+                cp_trans = cp_trans + cp[3]
+            end
+
             cp_obj_data:MakeWritable()
             local cp_pos = LinearTransform(
                 Vec3(1, 0, 0), 
                 Vec3(0, 1, 0), 
                 Vec3(0, 0, 1), 
-                payload_waypoints[wp_index]
+                cp_trans
             )
         
             cp_obj_data.blueprintTransform = cp_pos

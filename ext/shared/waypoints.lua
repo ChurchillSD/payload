@@ -11,7 +11,7 @@ mp_subway_waypoints = {
 
 mp_subway_cps = {
     {1, Guid("5C3EEC89-4314-4714-8423-1D10A0270458")},
-    {2, Guid("2A95E4F4-9A86-44BF-9285-07B75A05B137")},
+    {2, Guid("2A95E4F4-9A86-44BF-9285-07B75A05B137"), Vec3(0,0,-20)},
     {3, Guid("03611A2B-666A-45E7-B1D6-FFB87F2370FD")}
 }
 
