@@ -1,5 +1,5 @@
 
-waypoints = require("__shared/waypoints.lua")
+waypoints = require("__shared/waypoints")
 
 local M = {}
 
