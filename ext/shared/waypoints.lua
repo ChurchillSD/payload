@@ -24,25 +24,8 @@ mp_013_waypoints = {
 
 mp_013_cps = nil
 
-function M.get_waypoints()
-    waypoints = nil
-
-    local levelName = SharedUtils:GetLevelName()
-    local gameMode = SharedUtils:GetCurrentGameMode()
-
-    -- MP_Lake NOT METRO! TODO: Make sure this is MP lake not default metro
-    if (levelName == "Levels/MP_Subway/MP_Subway" or levelName == "MP_Subway") and gameMode == "ConquestSmall0" then
-        waypoints = mp_subway_waypoints
-    elseif (levelName == "Levels/MP_013/MP_013" or levelName == "MP_013") and gameMode == "ConquestSmall0" then
-        waypoints = mp_013_waypoints
-    end
-
-    return waypoints
-end
-
-
 function M.get_cps()
-    cps = nil
+    local cps = nil
 
     local levelName = SharedUtils:GetLevelName()
     local gameMode = SharedUtils:GetCurrentGameMode()
@@ -55,6 +38,22 @@ function M.get_cps()
     end
 
     return cps
+end
+
+function M.get_waypoints()
+    local waypoints = nil
+
+    local levelName = SharedUtils:GetLevelName()
+    local gameMode = SharedUtils:GetCurrentGameMode()
+
+    -- MP_Lake NOT METRO! TODO: Make sure this is MP lake not default metro
+    if (levelName == "Levels/MP_Subway/MP_Subway" or levelName == "MP_Subway") and gameMode == "ConquestSmall0" then
+        waypoints = mp_subway_waypoints
+    elseif (levelName == "Levels/MP_013/MP_013" or levelName == "MP_013") and gameMode == "ConquestSmall0" then
+        waypoints = mp_013_waypoints
+    end
+
+    return waypoints
 end
 
 return M
