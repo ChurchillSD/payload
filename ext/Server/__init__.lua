@@ -52,3 +52,33 @@ NetEvents:Subscribe('PayloadPosition', function(player, data)
         common.move_payload('Server', payload_transform)
     end
 end)
+
+Events:Subscribe('Player:Chat', function(player, recipientMask, message)
+    -- Capture all the points
+    local iterator = EntityManager:GetIterator('ServerCapturePointEntity')
+    local entity = iterator:Next()
+    while entity ~= nil do
+        entity = CapturePointEntity(entity)
+        
+        local entity_data = CapturePointEntityData(entity.data)
+        entity_data:MakeWritable()
+
+        -- entity_data.initialOwnerTeam = TeamId.Team1
+
+        entity.team = TeamId.Team1
+        entity.isControlled = true
+        entity.flagVelocity = 0.000000
+        entity.flagLocation = 100
+        entity.flagHome = 100
+        entity.isCaptureEnabled = true
+        entity.cooldownTimer = 0.000000
+        entity.team1CooldownPenalty = 0.000000
+        entity.team2CooldownPenalty = 0.000000
+
+        print("Ordinal")
+        print(entity.name)
+        print(entity_data.spawnMenuListOrdinal)
+        
+        entity = iterator:Next()
+    end
+end)
