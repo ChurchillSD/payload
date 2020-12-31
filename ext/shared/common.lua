@@ -9,11 +9,13 @@ payload_speed_bonus = 0.12 -- Measured in dist per second
 payload_max_pushers = 5 -- Maximum people pushing the cart before payload speed is capped
 payload_push_radius = 5 -- Area around the payload that counts as pushing it.
 
+payload_total_dist_moved = 0
 payload_entity = nil
 payload_transform = nil
 
 waypoint_index = 1
 payload_waypoints = nil
+payload_capturepoints = nil
 
 function M.create_payload(client_or_server, updated_transform)
     -- Get the waypoints for the current map
@@ -66,8 +68,8 @@ function move_towards_lin(from, to, max)
 end
 
 function M.update_payload_server(num_players_near, simulationDeltaTime)
-    local prev_wp = waypoints[waypoint_index]
-    local next_wp = waypoints[waypoint_index + 1]
+    local prev_wp = payload_waypoints[waypoint_index]
+    local next_wp = payload_waypoints[waypoint_index + 1]
     local dist_per_sec = payload_basespeed -- Base payload distance to move each tick.
 
     -- Payload speed changes based on num players near cart.
@@ -77,13 +79,18 @@ function M.update_payload_server(num_players_near, simulationDeltaTime)
 
     dist_per_sec = payload_basespeed + (num_players_near * payload_speed_bonus)
 
+    local previous_payload_trans = payload_transform.trans:Clone()
+
     -- Get new trans for the payload
     payload_transform.trans = move_towards_lin(payload_transform.trans, next_wp, (dist_per_sec * simulationDeltaTime)) -- payload_transform.trans:MoveTowards(next_wp, delta)
+
+    -- Update total distance moved
+    payload_total_dist_moved = payload_total_dist_moved + (payload_transform.trans:Distance(previous_payload_trans))
 
     -- Check if we have reached the next waypoint and update waypoint index
     if payload_transform.trans == next_wp then
         -- Check if we are not at the last waypoint
-        if waypoint_index ~= #waypoints - 1 then
+        if waypoint_index ~= #payload_waypoints - 1 then
             waypoint_index = waypoint_index + 1
         end
     end
@@ -123,7 +130,6 @@ function M.move_payload(client_or_server, transform)
         transform_new.trans = transform.trans
         M.create_payload(client_or_server, transform_new)
     end
-
 end
 
 return M

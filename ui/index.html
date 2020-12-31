@@ -1,6 +1,22 @@
 <!DOCTYPE html>
 <html>
-<body>
-    Hello world! TEST
-</body>
+    <body>
+        <canvas id="payload_track" width="600" height="100" style="border:1px solid #000000;"> </canvas> 
+        <p id="data1">Nofin' Here</p>
+        <p id="data2">Nofin' Here</p>
+        <p id="data3">Nofin' Here</p>
+
+        <script>
+            window.init_UI = function(data)
+            {
+                document.getElementById("data1").innerHTML = data.waypoint_distances;
+                document.getElementById("data2").innerHTML = data.cp_waypoint_numbers;
+            };
+
+            window.update_UI = function(data)
+            {
+                document.getElementById("data3").innerHTML = data.dist_moved;
+            };
+        </script>
+    </body>
 </html>

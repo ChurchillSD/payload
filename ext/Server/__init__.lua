@@ -1,5 +1,7 @@
 common = require('__shared/common')
 
+time_ui_update = 0
+
 function players_near_cart(team_number)
     -- Loop through all players on the team provided to see if they're near the cart
 
@@ -37,6 +39,14 @@ Events:Subscribe('Engine:Update', function(deltaTime, simulationDeltaTime)
         NetEvents:Broadcast('msg_move_payload', payload_transform)
         common.move_payload('Server', payload_transform)
     end
+
+    time_ui_update = time_ui_update + simulationDeltaTime
+
+    if time_ui_update > 0.1 then
+        NetEvents:Broadcast('update_ui', payload_total_dist_moved)
+        time_ui_update = 0
+    end
+
 end)
 
 -- Create the payload

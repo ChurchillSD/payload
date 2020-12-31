@@ -5,15 +5,17 @@ waypoints = require("__shared/waypoints")
 Events:Subscribe('Level:Loaded', function(levelName, gameMode)
     -- local b_instance = ResourceManager:SearchForInstanceByGuid(Guid("0EBE4C00-9840-4D65-49CB-019C23BBC66B"))
 
-    local cps = waypoints.get_cps()
+    if payload_capturepoints == nil then
+        payload_capturepoints = waypoints.get_cps()
+    end
 
     if payload_waypoints == nil then
         payload_waypoints = waypoints.get_waypoints()
     end
 
-    if cps ~= nil then
+    if payload_capturepoints ~= nil then
         print("Placing capture points...")
-        for _, cp in pairs(cps) do
+        for _, cp in pairs(payload_capturepoints) do
             print("Placing: ")
             local wp_index = cp[1]
             local cp_guid = cp[2]
