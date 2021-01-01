@@ -40,8 +40,8 @@ Events:Subscribe('Engine:Update', function(deltaTime, simulationDeltaTime)
         common.move_payload('Server', payload_transform)
     end
 
+    -- Update screen 10 times a sec I think lol
     time_ui_update = time_ui_update + simulationDeltaTime
-
     if time_ui_update > 0.1 then
         NetEvents:Broadcast('update_ui', payload_total_dist_moved)
         time_ui_update = 0
@@ -53,6 +53,7 @@ end)
 Events:Subscribe('Level:Loaded', function(levelName, gameMode)
     print("Creating payload")
     common.create_payload('Server')
+    NetEvents:Broadcast('initialise_UI')
 end)
 
 -- Get raycast result from client and update payload position

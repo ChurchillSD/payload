@@ -3,7 +3,7 @@ waypoints = require("__shared/waypoints")
 
 local M = {}
 
-function M.get_waypoint_info()
+function M.initialise_UI()
     if payload_waypoints == nil then
         payload_waypoints = waypoints.get_waypoints()
     end
