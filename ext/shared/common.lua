@@ -32,9 +32,6 @@ function M.create_payload(client_or_server, updated_transform)
             
             -- Set default position of payload to starting position
             payload_transform.trans = payload_waypoints[1] -- Start position
-
-            -- Resset total dist moved
-            payload_total_dist_moved = 0
             
             -- If transform has been passed in to function use that instead.
             if updated_transform ~= nil then
@@ -133,6 +130,16 @@ function M.move_payload(client_or_server, transform)
         transform_new.trans = transform.trans
         M.create_payload(client_or_server, transform_new)
     end
+end
+
+function M.reset_payload_vars()
+    payload_total_dist_moved = 0
+    payload_entity = nil
+    payload_transform = nil
+
+    waypoint_index = 1
+    payload_waypoints = nil
+    payload_capturepoints = nil
 end
 
 return M

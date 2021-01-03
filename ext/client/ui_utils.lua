@@ -8,12 +8,15 @@ function M.initialise_UI()
         payload_waypoints = waypoints.get_waypoints()
     end
 
-    local payload_cps = waypoints.get_cps()
-
+    if payload_capturepoints == nil then
+        print("Going in here")
+        payload_capturepoints = waypoints.get_cps()
+    end
+    print(payload_capturepoints)
     -- Extract just the numbers from the cps array
     local cp_waypoint_numbers = {}
-    for i = 1, #payload_cps do
-        cp_waypoint_numbers[i] = payload_cps[i][1]
+    for i = 1, #payload_capturepoints do
+        cp_waypoint_numbers[i] = payload_capturepoints[i][1]
     end
 
     -- Get waypoint numbers and distances between each waypoint

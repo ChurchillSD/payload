@@ -51,9 +51,11 @@ end)
 
 -- Create the payload
 Events:Subscribe('Level:Loaded', function(levelName, gameMode)
+    NetEvents:Broadcast('reset_payload')
+    common.reset_payload_vars()
+    
     print("Creating payload")
     common.create_payload('Server')
-    NetEvents:Broadcast('initialise_UI')
 end)
 
 -- Get raycast result from client and update payload position

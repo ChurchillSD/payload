@@ -1,21 +1,74 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <link rel="stylesheet" href="styles.css">
+    </head>
     <body>
-        <canvas id="payload_track" width="600" height="100" style="border:1px solid #000000;"> </canvas> 
-        <p id="data1">Nofin' Here</p>
+        <!-- <p id="data1">Nofin' Here</p>
         <p id="data2">Nofin' Here</p>
-        <p id="data3">Nofin' Here</p>
+        <p id="data3">Nofin' Here</p> -->
+
+        <div id="footer">
+            <canvas class="payload_canvas" id="static_payload_canvas" width="700" height="100" style="border:1px solid #000000;"> </canvas> 
+            <canvas class="payload_canvas" id="dynamic_payload_canvas" width="700" height="100" style="border:1px solid #000000;"> </canvas> 
+
+        </div>
 
         <script>
+            var CANVAS_HEIGHT = 100;
+            var CANVAS_WIDTH = 700;
+
+            var dist_per_pixel = null;
+            var payload_pos = [75, 50];
+
+            // Dynamic canvas
+            var dynamic_payload_canvas = document.getElementById("dynamic_payload_canvas");
+            var dynamic_ctx = dynamic_payload_canvas.getContext("2d");
+
+            // Static canvas
+            var static_payload_canvas = document.getElementById("static_payload_canvas");
+            var static_ctx = static_payload_canvas.getContext("2d");
+
+            function clear_canvas(ctx) {
+                ctx.clearRect(0, 0, 700, 100);
+            }
+
+            function draw_payload(position){
+                dynamic_ctx.beginPath();
+                dynamic_ctx.arc(position[0],position[1],1,0,2*Math.PI);
+                dynamic_ctx.strokeStyle = "#0c610b";
+                dynamic_ctx.lineWidth = 50;
+                dynamic_ctx.stroke();
+            }
+
             window.init_UI = function(data)
             {
-                document.getElementById("data1").innerHTML = data.waypoint_distances;
-                document.getElementById("data2").innerHTML = data.cp_waypoint_numbers;
+               var total_dist = data.waypoint_distances.reduce((a, b) => a + b, 0)
+
+                dist_per_pixel = total_dist/550 // Length of payload track on UI
+
+                console.log("Dist per pixel:")
+                console.log(dist_per_pixel);
+
+                // Set up track
+                static_ctx.moveTo(75, 50);
+                static_ctx.lineTo(625, 50);
+                static_ctx.lineWidth = 8;
+                static_ctx.stroke();
+
+                // Inital pos of payload
+                payload_pos = [75, 50]
+                draw_payload(payload_pos)
             };
 
             window.update_UI = function(data)
-            {
-                document.getElementById("data3").innerHTML = data.dist_moved;
+            {                
+                if(dist_per_pixel != null){
+                    payload_pos[0] = (data.dist_moved/dist_per_pixel) + 75; //Offset
+                }
+                
+                clear_canvas(dynamic_ctx)
+                draw_payload(payload_pos)
             };
         </script>
     </body>
