@@ -56,11 +56,8 @@ function M.get_cps()
 
     local levelName = SharedUtils:GetLevelName()
     local gameMode = SharedUtils:GetCurrentGameMode()
-    print(levelName)
-    print(gameMode)
     -- MP_Lake NOT METRO! TODO: Make sure this is MP lake not default metro
     if (levelName == "Levels/MP_Subway/MP_Subway" or levelName == "MP_Subway") and gameMode == "ConquestSmall0" then
-        print("HELLLOSOOOO")
         -- cps = mp_subway_cps_test
         cps = mp_subway_cps
     elseif (levelName == "Levels/MP_013/MP_013" or levelName == "MP_013") and gameMode == "ConquestSmall0" then
@@ -75,8 +72,6 @@ function M.get_waypoints()
 
     local levelName = SharedUtils:GetLevelName()
     local gameMode = SharedUtils:GetCurrentGameMode()
-    print(levelName)
-    print(gameMode)
     -- MP_Lake NOT METRO! TODO: Make sure this is MP lake not default metro
     if (levelName == "Levels/MP_Subway/MP_Subway" or levelName == "MP_Subway") and gameMode == "ConquestSmall0" then
         waypoints = mp_subway_waypoints
