@@ -3,16 +3,25 @@ waypoints = require("__shared/waypoints")
 
 local M = {}
 
+NetEvents:Subscribe('update_ui', function(payload_total_dist_moved, payload_blocked, attackers_near_cart)
+    local ui_info = {
+        ["dist_moved"] = payload_total_dist_moved, 
+        ["payload_blocked"] = payload_blocked,
+        ["attckers_pushing"] = attackers_near_cart
+    }
+    local dataJson = json.encode(ui_info)
+
+    WebUI:ExecuteJS('update_UI(' .. dataJson .. ');')
+end)
+
 function M.initialise_UI()
     if payload_waypoints == nil then
         payload_waypoints = waypoints.get_waypoints()
     end
 
     if payload_capturepoints == nil then
-        print("Going in here")
         payload_capturepoints = waypoints.get_cps()
     end
-    print(payload_capturepoints)
     -- Extract just the numbers from the cps array
     local cp_waypoint_numbers = {}
     for i = 1, #payload_capturepoints do
@@ -25,25 +34,14 @@ function M.initialise_UI()
 
     -- Send waypoint info to UI to generate track HUD element
     local data = {
-        waypoint_distances = waypoint_distances,
-        cp_waypoint_numbers = cp_waypoint_numbers,
+        ["waypoint_distances"] = waypoint_distances,
+        ["cp_waypoint_numbers"] = cp_waypoint_numbers,
     }
 
     local dataJson = json.encode(data)
 
     WebUI:ExecuteJS('init_UI(' .. dataJson .. ');')
 end
-
-function M.update_payload_UI(payload_total_distance)
-    local data = {
-        dist_moved = payload_total_distance,
-    }
-
-    local dataJson = json.encode(data)
-
-    WebUI:ExecuteJS('update_UI(' .. dataJson .. ');')
-end
-
 
 function M.get_distances(waypoints)
 -- Finds the distances from last waypoints
@@ -53,7 +51,6 @@ function M.get_distances(waypoints)
         local dist = 0
         -- If first waypoint then distance from previous is 0
         if i == 1 then
-            print("dist 0")
             dist = 0
         else
             local last_waypoint = waypoints[i-1]

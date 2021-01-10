@@ -4,9 +4,9 @@
         <link rel="stylesheet" href="styles.css">
     </head>
     <body>
-        <!-- <p id="data1">Nofin' Here</p>
-        <p id="data2">Nofin' Here</p>
-        <p id="data3">Nofin' Here</p> -->
+        <p id="data1">Nofin' Here</p>
+        <!-- <p id="data2">Nofin' Here</p> -->
+        <!-- <p id="data3">Nofin' Here</p> -->
 
         <div id="footer">
             <canvas class="payload_canvas" id="static_payload_canvas" width="700" height="100" style="border:1px solid #000000;"> </canvas> 
@@ -18,8 +18,20 @@
             var CANVAS_HEIGHT = 100;
             var CANVAS_WIDTH = 700;
 
+            // Track config vars
+            var TRACK_START_POS = 75;
+            var TRACK_END_POS = 625;
+            var TRACK_VERTICAL_OFFSET = 50;
+            var TRACK_THICKNESS = 8;
+            var TRACK_LENGTH = TRACK_END_POS - TRACK_START_POS;
+
+            // Payload config vars
+            var PAYLOAD_START_POS = [TRACK_START_POS, TRACK_VERTICAL_OFFSET]
+
+            // Globals
             var dist_per_pixel = null;
-            var payload_pos = [75, 50];
+            var payload_pos = PAYLOAD_START_POS;
+            var waypoint_positions = [];
 
             // Dynamic canvas
             var dynamic_payload_canvas = document.getElementById("dynamic_payload_canvas");
@@ -29,46 +41,115 @@
             var static_payload_canvas = document.getElementById("static_payload_canvas");
             var static_ctx = static_payload_canvas.getContext("2d");
 
-            function clear_canvas(ctx) {
-                ctx.clearRect(0, 0, 700, 100);
+            // Sums all values in array
+            function sum_array(in_array){
+                return in_array.reduce((a, b) => a + b, 0)
             }
 
-            function draw_payload(position){
-                dynamic_ctx.beginPath();
-                dynamic_ctx.arc(position[0],position[1],1,0,2*Math.PI);
-                dynamic_ctx.strokeStyle = "#0c610b";
-                dynamic_ctx.lineWidth = 50;
-                dynamic_ctx.stroke();
+            // Clears down canvas
+            function clear_canvas(ctx) {
+                ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            }
+
+            function draw_payload(position, ctx){
+                ctx.beginPath();
+                ctx.arc(position[0],position[1],1,0,2*Math.PI);
+                ctx.strokeStyle = "#0c610b";
+                ctx.lineWidth = 50;
+                ctx.stroke();
+            }
+
+            // Draws waypoints and updates them after a payload has gone passed
+            function draw_waypoints(position, ctx){
+                // Draw waypoints
+                for(var i=0;i<waypoint_positions.length;i++){
+                    ctx.beginPath();
+                    ctx.arc(waypoint_positions[i][0],waypoint_positions[i][1],1,0,2*Math.PI);
+
+                    // If payload has passed waypoint, change its color to captured
+                    if (position[0] > waypoint_positions[i][0]){
+                        ctx.strokeStyle = "#003cff";
+                    } else {
+                        ctx.strokeStyle = "#ffffff";
+
+                    }
+
+                    ctx.lineWidth = 50;
+                    ctx.stroke();
+                }
+            }
+
+            // Draws the current number of pushers and if the payload is blocked or not
+            function draw_pushing_status(payload_pos, payload_blocked, number_of_pushers, ctx){
+                var status_text = "";
+                if (payload_blocked){
+                    status_text = "Payload Blocked.";
+                } else if (!payload_blocked && (number_of_pushers > 0)) {
+                    status_text = number_of_pushers.toString() + "\n>>";
+                } else {
+                    document.getElementById("data1").innerText = "Payload chilling out.";
+                }
+
+                // Writing payload status
+                ctx.font = "15px Arial";
+                ctx.fillText(status_text,payload_pos[0],TRACK_VERTICAL_OFFSET + 30);
+            }
+
+            // Get waypoint positions on payload ui track
+            function get_waypoint_positions(cp_numbers, waypoint_dists, dist_per_pixel){
+                waypoint_positions = [];
+                console.log("CP nums:")
+                console.log(cp_numbers)
+                for(var i=0; i<waypoint_dists.length;i++){
+                    console.log("Loop stuff:")
+                    console.log(cp_numbers.includes((i+1)));
+                    console.log(i+1);
+                    // Lua is 1 indexed and js is not... Grrr
+                    if (cp_numbers.includes((i+1))){
+                        console.log("FOUND WAYPOINT")
+
+                        // Summing all distances up until the waypoint
+                        var dist_start_to_waypoint = sum_array(waypoint_dists.slice(0, (i+1)))
+
+                        waypoint_positions.push([TRACK_START_POS + (dist_start_to_waypoint/dist_per_pixel), TRACK_VERTICAL_OFFSET]);
+                    }
+                }
             }
 
             window.init_UI = function(data)
             {
-               var total_dist = data.waypoint_distances.reduce((a, b) => a + b, 0)
+                // Add up all distances 
+                var total_dist = sum_array(data.waypoint_distances)
 
-                dist_per_pixel = total_dist/550 // Length of payload track on UI
+                // Length of payload track on UI
+                dist_per_pixel = total_dist/TRACK_LENGTH 
 
-                console.log("Dist per pixel:")
-                console.log(dist_per_pixel);
+                // Get waypoint positions on UI
+                get_waypoint_positions(data.cp_waypoint_numbers, data.waypoint_distances, dist_per_pixel)
 
                 // Set up track
-                static_ctx.moveTo(75, 50);
-                static_ctx.lineTo(625, 50);
-                static_ctx.lineWidth = 8;
+                static_ctx.moveTo(TRACK_START_POS, TRACK_VERTICAL_OFFSET);
+                static_ctx.lineTo(TRACK_END_POS, TRACK_VERTICAL_OFFSET);
+                static_ctx.lineWidth = TRACK_THICKNESS;
                 static_ctx.stroke();
 
+                clear_canvas(dynamic_ctx);
                 // Inital pos of payload
-                payload_pos = [75, 50]
-                draw_payload(payload_pos)
+                draw_payload(PAYLOAD_START_POS)
             };
 
             window.update_UI = function(data)
             {                
-                if(dist_per_pixel != null){
-                    payload_pos[0] = (data.dist_moved/dist_per_pixel) + 75; //Offset
-                }
-                
                 clear_canvas(dynamic_ctx)
-                draw_payload(payload_pos)
+
+                if(dist_per_pixel != null){
+                    payload_pos[0] = (data.dist_moved/dist_per_pixel) + TRACK_START_POS; //Offset
+                }
+                draw_payload(payload_pos, dynamic_ctx)
+
+                draw_waypoints(payload_pos, dynamic_ctx)
+
+                draw_pushing_status(payload_pos, data.payload_blocked, data.attckers_pushing, dynamic_ctx)
             };
         </script>
     </body>

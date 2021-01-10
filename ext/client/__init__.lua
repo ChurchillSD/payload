@@ -5,10 +5,6 @@ NetEvents:Subscribe('msg_move_payload', function(data)
     common.move_payload('Client', data)
 end)
 
-NetEvents:Subscribe('update_ui', function(data)
-    ui_utils.update_payload_UI(data)
-end)
-
 NetEvents:Subscribe('reset_payload', function(data)
     common.reset_payload_vars()
 end)

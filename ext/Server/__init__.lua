@@ -29,6 +29,7 @@ Events:Subscribe('Engine:Update', function(deltaTime, simulationDeltaTime)
     -- Get players near cart on both team
     local attackers_near_cart = players_near_cart(1) -- Us
     local defenders_near_cart = players_near_cart(2) -- Ru
+    local payload_blocked = false;
 
     -- If no defenders near and at least one attacker near cart, then move cart
     if (attackers_near_cart > 0) and (defenders_near_cart == 0) then
@@ -40,10 +41,17 @@ Events:Subscribe('Engine:Update', function(deltaTime, simulationDeltaTime)
         common.move_payload('Server', payload_transform)
     end
 
+    -- Is payload blocked by defenders
+    if (defenders_near_cart > 0) and (attackers_near_cart > 0) then
+        payload_blocked = true
+    else
+        payload_blocked = false
+    end
+
     -- Update screen 10 times a sec I think lol
     time_ui_update = time_ui_update + simulationDeltaTime
     if time_ui_update > 0.1 then
-        NetEvents:Broadcast('update_ui', payload_total_dist_moved)
+        NetEvents:Broadcast('update_ui', payload_total_dist_moved, payload_blocked, attackers_near_cart)
         time_ui_update = 0
     end
 
@@ -88,10 +96,6 @@ Events:Subscribe('Player:Chat', function(player, recipientMask, message)
         entity.team1CooldownPenalty = 0.000000
         entity.team2CooldownPenalty = 0.000000
 
-        print("Ordinal")
-        print(entity.name)
-        print(entity_data.spawnMenuListOrdinal)
-        
         entity = iterator:Next()
     end
 end)
