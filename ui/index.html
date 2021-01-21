@@ -8,10 +8,23 @@
         <!-- <p id="data2">Nofin' Here</p> -->
         <!-- <p id="data3">Nofin' Here</p> -->
 
-        <div id="footer">
-            <canvas class="payload_canvas" id="static_payload_canvas" width="700" height="100" style="border:1px solid #000000;"> </canvas> 
-            <canvas class="payload_canvas" id="dynamic_payload_canvas" width="700" height="100" style="border:1px solid #000000;"> </canvas> 
+        <p>Images to use:</p>
+        <img id="payload_blue" width="70" height="70" src="https://hectorbailey.co.uk/payload-mod/payload_blue_70x70.png">
+        <img id="payload_red" width="70" height="70" src="https://hectorbailey.co.uk/payload-mod/payload_red_70x70.png">
+        <img id="payload_neutral" width="70" height="70" src="https://hectorbailey.co.uk/payload-mod/payload_neutral_70x70.png">
+        </br>
+        <img id="CP_1_Blue" width="60" height="60" src="https://hectorbailey.co.uk/payload-mod/CP_A_Blue.png">
+        <img id="CP_1_Red" width="60" height="60" src="https://hectorbailey.co.uk/payload-mod/CP_A_Red.png">
+        </br>
+        <img id="CP_2_Blue" width="60" height="60" src="https://hectorbailey.co.uk/payload-mod/CP_B_Blue.png">
+        <img id="CP_2_Red" width="60" height="60" src="https://hectorbailey.co.uk/payload-mod/CP_B_Red.png">
+        </br>
+        <img id="CP_3_Blue" width="60" height="60" src="https://hectorbailey.co.uk/payload-mod/CP_C_Blue.png">
+        <img id="CP_3_Red" width="60" height="60" src="https://hectorbailey.co.uk/payload-mod/CP_C_Red.png">
 
+        <div id="footer">
+            <canvas class="payload_canvas" id="static_payload_canvas" width="700" height="100"> </canvas> 
+            <canvas class="payload_canvas" id="dynamic_payload_canvas" width="700" height="100"> </canvas> 
         </div>
 
         <script>
@@ -21,8 +34,9 @@
             // Track config vars
             var TRACK_START_POS = 75;
             var TRACK_END_POS = 625;
+            var TRACK_VERTICAL_POS = 10;
             var TRACK_VERTICAL_OFFSET = 50;
-            var TRACK_THICKNESS = 8;
+            var TRACK_THICKNESS = 0;
             var TRACK_LENGTH = TRACK_END_POS - TRACK_START_POS;
 
             // Payload config vars
@@ -32,6 +46,7 @@
             var dist_per_pixel = null;
             var payload_pos = PAYLOAD_START_POS;
             var waypoint_positions = [];
+            var team_name = "US"; //"US" or "RU" 
 
             // Dynamic canvas
             var dynamic_payload_canvas = document.getElementById("dynamic_payload_canvas");
@@ -51,31 +66,74 @@
                 ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
             }
 
-            function draw_payload(position, ctx){
-                ctx.beginPath();
-                ctx.arc(position[0],position[1],1,0,2*Math.PI);
-                ctx.strokeStyle = "#0c610b";
-                ctx.lineWidth = 50;
-                ctx.stroke();
+            function draw_payload(position, ctx, payload_blocked, attckers_pushing){
+                var img = document.getElementById("payload_neutral");
+
+                if(team_name == "US"){
+                    if(payload_blocked){
+                        img = document.getElementById("payload_red");
+                    }
+
+                    if(attckers_pushing > 0 && !payload_blocked){
+                        img = document.getElementById("payload_blue");
+                    }
+                }
+
+                if(team_name == "RU"){
+                    if(attckers_pushing > 0 && !payload_blocked){
+                        img = document.getElementById("payload_red");
+                    }
+                }
+
+                var img_height = img.clientHeight;
+                var img_width = img.clientWidth;
+
+                ctx.drawImage(img, (position[0] - (img_width/2)),(position[1] - (img_height/2)));
+            }
+
+            // Gets the correct waypoint img for the current state/ team
+            function get_waypoint_img(waypoint_index, waypoint_captured){
+                var waypoint_color = "Blue";
+
+                // IF waypoint caputred
+                if (waypoint_captured){
+                    if (team_name == "US"){
+                        waypoint_color = "Blue"
+                    } else {
+                        waypoint_color = "Red"
+                    }
+                } else { // Waypoint not yet captured
+                    if (team_name == "US"){
+                        waypoint_color = "Red"
+                    } else {
+                        waypoint_color = "Blue"
+                    }
+                }
+
+                return(document.getElementById("CP_" + waypoint_index.toString() + "_" + waypoint_color))
             }
 
             // Draws waypoints and updates them after a payload has gone passed
             function draw_waypoints(position, ctx){
                 // Draw waypoints
                 for(var i=0;i<waypoint_positions.length;i++){
+                    var waypoint_captured = false;
+
                     ctx.beginPath();
                     ctx.arc(waypoint_positions[i][0],waypoint_positions[i][1],1,0,2*Math.PI);
-
-                    // If payload has passed waypoint, change its color to captured
+                    
+                    // If payload has passed waypoint, it's been captured
                     if (position[0] > waypoint_positions[i][0]){
-                        ctx.strokeStyle = "#003cff";
-                    } else {
-                        ctx.strokeStyle = "#ffffff";
-
+                        waypoint_captured = true;
                     }
 
-                    ctx.lineWidth = 50;
-                    ctx.stroke();
+                    // Get waypoint img based on index and weather the waypoint is caputured
+                    waypoint_img = get_waypoint_img(i+1, waypoint_captured)
+
+                    var img_height = waypoint_img.clientHeight;
+                    var img_width = waypoint_img.clientWidth;
+
+                    ctx.drawImage(waypoint_img, (waypoint_positions[i][0] - (img_width/2)),(waypoint_positions[i][1] - (img_height/2)));
                 }
             }
 
@@ -92,7 +150,7 @@
 
                 // Writing payload status
                 ctx.font = "15px Arial";
-                ctx.fillText(status_text,payload_pos[0],TRACK_VERTICAL_OFFSET + 30);
+                ctx.fillText(status_text,payload_pos[0], 10);
             }
 
             // Get waypoint positions on payload ui track
@@ -118,6 +176,9 @@
 
             window.init_UI = function(data)
             {
+                // TODO: assin team_name global
+                team_name = "US" //data.team_name???
+
                 // Add up all distances 
                 var total_dist = sum_array(data.waypoint_distances)
 
@@ -128,14 +189,14 @@
                 get_waypoint_positions(data.cp_waypoint_numbers, data.waypoint_distances, dist_per_pixel)
 
                 // Set up track
-                static_ctx.moveTo(TRACK_START_POS, TRACK_VERTICAL_OFFSET);
-                static_ctx.lineTo(TRACK_END_POS, TRACK_VERTICAL_OFFSET);
+                static_ctx.moveTo(TRACK_START_POS, TRACK_VERTICAL_POS);
+                static_ctx.lineTo(TRACK_END_POS, TRACK_VERTICAL_POS);
                 static_ctx.lineWidth = TRACK_THICKNESS;
                 static_ctx.stroke();
 
                 clear_canvas(dynamic_ctx);
                 // Inital pos of payload
-                draw_payload(PAYLOAD_START_POS)
+                draw_payload(PAYLOAD_START_POS, dynamic_ctx)
             };
 
             window.update_UI = function(data)
@@ -145,11 +206,11 @@
                 if(dist_per_pixel != null){
                     payload_pos[0] = (data.dist_moved/dist_per_pixel) + TRACK_START_POS; //Offset
                 }
-                draw_payload(payload_pos, dynamic_ctx)
-
                 draw_waypoints(payload_pos, dynamic_ctx)
 
                 draw_pushing_status(payload_pos, data.payload_blocked, data.attckers_pushing, dynamic_ctx)
+
+                draw_payload(payload_pos, dynamic_ctx, data.payload_blocked, data.attckers_pushing)
             };
         </script>
     </body>
