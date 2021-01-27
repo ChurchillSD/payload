@@ -3,8 +3,7 @@ previous_distance_moved = 0
 
 window.init_UI = function(data)
 {
-    // TODO: assin team_name global
-    team_name = "US" //data.team_name???
+    team_name = data.team_name
 
     // Add up all distances 
     var total_dist = sum_array(data.waypoint_distances)
@@ -32,7 +31,8 @@ window.init_UI = function(data)
 
 window.update_UI = function(data)
 {                
-
+    team_name = data.team_name
+    
     // Check if payload moving backwards
     var payload_moving_backwards = false
     if (data.dist_moved < previous_distance_moved){

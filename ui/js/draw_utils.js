@@ -20,6 +20,7 @@ function sum_array(in_array){
 // Clears down canvas
 function clear_canvas(ctx) {
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    ctx.beginPath();
 }
 
 function draw_payload(position, ctx, payload_blocked, attckers_pushing){
@@ -36,6 +37,10 @@ function draw_payload(position, ctx, payload_blocked, attckers_pushing){
     }
 
     if(team_name == "RU"){
+        if(payload_blocked){
+            img = document.getElementById("payload_blue");
+        }
+
         if(attckers_pushing > 0 && !payload_blocked){
             img = document.getElementById("payload_red");
         }
@@ -134,6 +139,7 @@ function update_pushing_status(payload_pos, payload_blocked, payload_moving_back
 function update_track(payload_pos, ctx){
     ctx.moveTo(TRACK_START_POS, TRACK_Y_POS);
     ctx.lineTo(payload_pos[0], TRACK_Y_POS);
+
     if(team_name == "US"){
         ctx.strokeStyle = ATTACKERS_PROGRESS_COLOR;
         ctx.shadowColor = ATTACKERS_PROGRESS_GLOW;
