@@ -169,6 +169,10 @@ function M.update_tickets(deltaTime)
         us_time = waypoints.get_initial_time()
     end
 
+    if us_tickets < 0 then
+        us_tickets = 0
+    end
+
     if ru_tickets ~= nil then
         TicketManager:SetTicketCount(TeamId.Team2, ru_tickets)
         TicketManager:SetTicketCount(TeamId.Team1, us_tickets)
