@@ -18,7 +18,11 @@ window.init_UI = function(data)
     // Set up track
     static_ctx.moveTo(TRACK_START_POS, TRACK_Y_POS);
     static_ctx.lineTo(TRACK_END_POS, TRACK_Y_POS);
+    static_ctx.strokeStyle = "#FFFFFF";
     static_ctx.lineWidth = TRACK_THICKNESS;
+    static_ctx.lineCap = 'round';
+    static_ctx.shadowBlur = TRACK_GLOW;
+    static_ctx.shadowColor = "#73b7ff";
     static_ctx.stroke();
 
     clear_canvas(dynamic_ctx);
@@ -48,4 +52,6 @@ window.update_UI = function(data)
     draw_waypoints(payload_pos, dynamic_ctx)
     draw_payload(payload_pos, dynamic_ctx, data.payload_blocked, data.attckers_pushing)
     update_pushing_status(payload_pos, data.payload_blocked, payload_moving_backwards, data.attckers_pushing, dynamic_ctx)
+
+    update_track(payload_pos, dynamic_ctx)
 };
