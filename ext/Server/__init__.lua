@@ -48,10 +48,10 @@ Events:Subscribe('Engine:Update', function(deltaTime, simulationDeltaTime)
         payload_blocked = false
     end
 
-    -- Update screen 10 times a sec I think lol
+    -- Update UI 10 times a sec I think lol
     time_ui_update = time_ui_update + simulationDeltaTime
     if time_ui_update > 0.1 then
-        NetEvents:Broadcast('update_ui', payload_total_dist_moved, payload_blocked, attackers_near_cart)
+        NetEvents:Broadcast('update_ui', payload_total_dist_moved, payload_blocked, attackers_near_cart, us_time)
         time_ui_update = 0
     end
 

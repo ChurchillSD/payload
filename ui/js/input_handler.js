@@ -32,7 +32,11 @@ window.init_UI = function(data)
 window.update_UI = function(data)
 {                
     team_name = data.team_name
+
+    time_left = data.time_left
     
+    document.getElementById("data1").innerText = time_left;
+
     // Check if payload moving backwards
     var payload_moving_backwards = false
     if (data.dist_moved < previous_distance_moved){

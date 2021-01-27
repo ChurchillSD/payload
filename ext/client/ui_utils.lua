@@ -14,17 +14,18 @@ function get_team_name()
             team_name = "RU"
         end
     end
-    
+
     return team_name
 end
 
-NetEvents:Subscribe('update_ui', function(payload_total_dist_moved, payload_blocked, attackers_near_cart)
+NetEvents:Subscribe('update_ui', function(payload_total_dist_moved, payload_blocked, attackers_near_cart, time_left)
     local team_name = get_team_name()
     local ui_info = {
         ["dist_moved"] = payload_total_dist_moved, 
         ["payload_blocked"] = payload_blocked,
         ["attckers_pushing"] = attackers_near_cart,
-        ["team_name"] = team_name
+        ["team_name"] = team_name,
+        ["time_left"] = time_left
     }
 
     local dataJson = json.encode(ui_info)

@@ -3,6 +3,7 @@ var dist_per_pixel = null;
 var payload_pos = PAYLOAD_START_POS;
 var waypoint_positions = [];
 var team_name = "US"; //"US" or "RU" 
+var time_left = 3.00;
 
 // Dynamic canvas
 var dynamic_payload_canvas = document.getElementById("dynamic_payload_canvas");
