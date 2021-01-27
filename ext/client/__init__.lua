@@ -12,6 +12,8 @@ end)
 Events:Subscribe('Level:Loaded', function(levelName, gameMode)
     print("Initialise payload UI")
     common.create_payload('Client')
+    -- Ask the server for a payload update
+    NetEvents:Send('PayloadPositionRequest')
     ui_utils.initialise_UI()
 end)
 

@@ -76,6 +76,12 @@ Events:Subscribe('Level:Loaded', function(levelName, gameMode)
     end
 end)
 
+-- Client asking for the payload position
+NetEvents:Subscribe('PayloadPositionRequest', function(player, data)
+    -- Send the client the latest payload position
+    NetEvents:SendTo("msg_move_payload", player, payload_transform)
+end)
+
 -- Get raycast result from client and update payload position
 NetEvents:Subscribe('PayloadPosition', function(player, data)
     -- Check to make sure data recived is good.
@@ -84,28 +90,28 @@ NetEvents:Subscribe('PayloadPosition', function(player, data)
     end
 end)
 
-Events:Subscribe('Player:Chat', function(player, recipientMask, message)
-    -- Capture all the points
-    local iterator = EntityManager:GetIterator('ServerCapturePointEntity')
-    local entity = iterator:Next()
-    while entity ~= nil do
-        entity = CapturePointEntity(entity)
+-- Events:Subscribe('Player:Chat', function(player, recipientMask, message)
+--     -- Capture all the points
+--     local iterator = EntityManager:GetIterator('ServerCapturePointEntity')
+--     local entity = iterator:Next()
+--     while entity ~= nil do
+--         entity = CapturePointEntity(entity)
         
-        local entity_data = CapturePointEntityData(entity.data)
-        entity_data:MakeWritable()
+--         local entity_data = CapturePointEntityData(entity.data)
+--         entity_data:MakeWritable()
 
-        -- entity_data.initialOwnerTeam = TeamId.Team1
+--         -- entity_data.initialOwnerTeam = TeamId.Team1
 
-        entity.team = TeamId.Team2
-        entity.isControlled = true
-        entity.flagVelocity = 0.000000
-        entity.flagLocation = 100
-        entity.flagHome = 100
-        entity.isCaptureEnabled = true
-        entity.cooldownTimer = 0.000000
-        entity.team1CooldownPenalty = 0.000000
-        entity.team2CooldownPenalty = 0.000000
+--         entity.team = TeamId.Team2
+--         entity.isControlled = true
+--         entity.flagVelocity = 0.000000
+--         entity.flagLocation = 100
+--         entity.flagHome = 100
+--         entity.isCaptureEnabled = true
+--         entity.cooldownTimer = 0.000000
+--         entity.team1CooldownPenalty = 0.000000
+--         entity.team2CooldownPenalty = 0.000000
 
-        entity = iterator:Next()
-    end
-end)
+--         entity = iterator:Next()
+--     end
+-- end)
