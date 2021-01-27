@@ -37,6 +37,8 @@ function M.create_payload(client_or_server, updated_transform)
     -- Initialise all variables
     ru_tickets = initial_tickets
     us_time = nil
+    waypoint_index = 1
+    capturepoint_index = 0
 
     -- Get the waypoints for the current map
     payload_waypoints = waypoints.get_waypoints()
