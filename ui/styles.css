@@ -19,20 +19,36 @@ img {
     visibility: hidden;
 }
 
-.glow {
-    font-size: 80px;
-    color: #fff;
+
+#time_left_box {
     text-align: center;
-    -webkit-animation: glow 1s ease-in-out infinite alternate;
-    -moz-animation: glow 1s ease-in-out infinite alternate;
-    animation: glow 1s ease-in-out infinite alternate;
+    padding: 0px;
+    margin-top: 70px;
+}
+
+.inline{
+    display: inline;
+}
+
+.glow{
+    font-size: 20px;
+    color: #fff;
+    text-shadow: 0 0 2px #49a1ff;
+}
+
+.dynamic_glow {
+    font-size: 20px;
+    color: #fff;
+    -webkit-animation: animation_glow 1s ease-in-out infinite alternate;
+    -moz-animation: animation_glow 1s ease-in-out infinite alternate;
+    animation: animation_glow 1s ease-in-out infinite alternate;
 }
   
-@-webkit-keyframes glow {
+@-webkit-keyframes animation_glow {
     from {
-        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073, 0 0 40px #e60073, 0 0 50px #e60073, 0 0 60px #e60073, 0 0 70px #e60073;
+        text-shadow: 0 0 3px #fff, 0 0 1px #fff, 0 0 2px #49a1ff, 0 0 3px #49a1ff, 0 0 4px #49a1ff, 0 0 5px #49a1ff, 0 0 6px #49a1ff;
     }
     to {
-        text-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px #ff4da6, 0 0 60px #ff4da6, 0 0 70px #ff4da6, 0 0 80px #ff4da6;
+        text-shadow: 0 0 4px #fff, 0 0 5px #73b7ff, 0 0 6px #73b7ff, 0 0 7px #73b7ff, 0 0 8px #73b7ff, 0 0 9px #73b7ff, 0 0 10px #73b7ff;
     }
 }

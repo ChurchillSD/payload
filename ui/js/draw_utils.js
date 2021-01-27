@@ -24,7 +24,16 @@ function clear_canvas(ctx) {
     ctx.beginPath();
 }
 
-function draw_payload(position, ctx, payload_blocked, attckers_pushing){
+// Draws payload esp on screen
+function draw_payload_esp(payload_screen_pos, payload_img, ctx){
+    if (typeof payload_screen_pos !== "undefined"){
+        console.log(payload_screen_pos)
+        ctx.drawImage(payload_img, payload_screen_pos[0], payload_screen_pos[1]);
+    }
+}
+
+// Draws payload on UI
+function draw_payload(position, payload_screen_pos, ctx, payload_blocked, attckers_pushing){
     var img = document.getElementById("payload_neutral");
 
     if(team_name == "US"){
@@ -50,6 +59,7 @@ function draw_payload(position, ctx, payload_blocked, attckers_pushing){
     var img_height = img.clientHeight;
     var img_width = img.clientWidth;
 
+    draw_payload_esp(payload_screen_pos, img, ctx)
     ctx.drawImage(img, (position[0] - (img_width/2)),(position[1] - (img_height/2)));
 }
 
@@ -115,7 +125,6 @@ function draw_pushing_status(ctx, payload_pos, arrow_img, number_of_pushers){
     arrow_height = arrow_img.clientHeight
     ctx.drawImage(arrow_img, (payload_pos[0] - ((arrow_width/2) - INDICATOR_ARROW_X_OFFSET)), (payload_pos[1] - INDICATOR_ARROW_Y_OFFSET));
 }
-
 
 // Draws the current direction payload is moving with arrows
 function update_pushing_status(payload_pos, payload_blocked, payload_moving_backwards, number_of_pushers, ctx){

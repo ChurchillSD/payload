@@ -32,11 +32,10 @@ window.init_UI = function(data)
 window.update_UI = function(data)
 {                
     team_name = data.team_name
-
     time_left = data.time_left
-    
-    document.getElementById("data1").innerText = time_left;
 
+    payload_screen_pos = [data.payload_x, data.payload_y]
+    
     // Check if payload moving backwards
     var payload_moving_backwards = false
     if (data.dist_moved < previous_distance_moved){
@@ -52,10 +51,21 @@ window.update_UI = function(data)
     // Clear the dynamic canvas
     clear_canvas(dynamic_ctx)
 
-    // Update dynamic elements
+    // Update dynamic canvas elements
     draw_waypoints(payload_pos, dynamic_ctx)
-    draw_payload(payload_pos, dynamic_ctx, data.payload_blocked, data.attckers_pushing)
+    draw_payload(payload_pos, payload_screen_pos, dynamic_ctx, data.payload_blocked, data.attckers_pushing)
     update_pushing_status(payload_pos, data.payload_blocked, payload_moving_backwards, data.attckers_pushing, dynamic_ctx)
-
     update_track(payload_pos, dynamic_ctx)
+
+    // Update time left
+    if (typeof time_left !== "undefined"){
+        var minutes = Math.floor(time_left.toFixed(0) / 60);
+        var seconds = time_left.toFixed(0) - minutes * 60;
+        var time_left_str = "Time Left: "
+        if (minutes > 0){
+            time_left_str = time_left_str + minutes.toString() + "m ";
+        } 
+        time_left_str = time_left_str + seconds.toString() + "s"
+        document.getElementById("time_left").innerText =  time_left_str;
+    }
 };
