@@ -5,3 +5,7 @@
     left:50%;
     margin-left:-350px;
 }
+
+img {
+    visibility: hidden;
+}

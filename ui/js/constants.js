@@ -1,0 +1,17 @@
+// Canvas infomation
+var CANVAS_HEIGHT = 200;
+var CANVAS_WIDTH = 700;
+
+// Track config vars
+var TRACK_START_POS = 75;
+var TRACK_END_POS = 625;
+var TRACK_Y_POS = 100;
+var TRACK_THICKNESS = 2;
+var TRACK_LENGTH = TRACK_END_POS - TRACK_START_POS;
+
+// Payload config vars
+var PAYLOAD_Y_OFFSET = 55
+var PAYLOAD_START_POS = [TRACK_START_POS, PAYLOAD_Y_OFFSET]
+
+// Waypoint vars
+var WAYPOINT_Y_OFFSET = 160;
