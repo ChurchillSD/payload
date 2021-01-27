@@ -3,12 +3,30 @@ waypoints = require("__shared/waypoints")
 
 local M = {}
 
+function get_team_name()
+    local client_player = PlayerManager:GetLocalPlayer()
+    local team_name = "US"
+
+    if client_player ~= nil then 
+        if client_player.teamId == 1 then
+            team_name = "US"
+        else
+            team_name = "RU"
+        end
+    end
+    
+    return team_name
+end
+
 NetEvents:Subscribe('update_ui', function(payload_total_dist_moved, payload_blocked, attackers_near_cart)
+    local team_name = get_team_name()
     local ui_info = {
         ["dist_moved"] = payload_total_dist_moved, 
         ["payload_blocked"] = payload_blocked,
-        ["attckers_pushing"] = attackers_near_cart
+        ["attckers_pushing"] = attackers_near_cart,
+        ["team_name"] = team_name
     }
+
     local dataJson = json.encode(ui_info)
 
     WebUI:ExecuteJS('update_UI(' .. dataJson .. ');')
@@ -32,10 +50,13 @@ function M.initialise_UI()
     local waypoint_distances = {}
     waypoint_distances = M.get_distances(payload_waypoints)
 
+    local team_name = get_team_name()
+
     -- Send waypoint info to UI to generate track HUD element
     local data = {
         ["waypoint_distances"] = waypoint_distances,
         ["cp_waypoint_numbers"] = cp_waypoint_numbers,
+        ["team_name"] = team_name
     }
 
     local dataJson = json.encode(data)
