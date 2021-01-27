@@ -145,7 +145,27 @@ function M.update_payload_server(num_players_near, simulationDeltaTime)
             -- Update US time
             us_time = us_time + payload_capturepoints[capturepoint_index][4]
             -- Capture the flag!
-            -- TODO
+            local cp_indexes = {"A", "B", "C", "D", "E", "F", "G"}
+            local iterator = EntityManager:GetIterator('ServerCapturePointEntity')
+            local entity = iterator:Next()
+            while entity ~= nil do
+                entity = CapturePointEntity(entity)
+
+                local name = tostring(entity.name)
+
+                local cp_letter = string.sub(name, string.len(name))
+
+                if cp_letter == cp_indexes[capturepoint_index] then
+                    local entity_data = CapturePointEntityData(entity.data)
+                    entity_data:MakeWritable()
+
+                    entity.team = TeamId.Team1
+                    break
+                end
+
+                entity = iterator:Next()
+            end
+
         end
 
         ru_tickets = math.ceil(initial_tickets * (1 - (capturepoint_index / total_cps)))
