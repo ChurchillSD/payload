@@ -155,11 +155,16 @@ function M.update_tickets(deltaTime)
 
 
     local us_tickets = initial_tickets
-    if us_time ~= nil then
-        us_time = us_time - deltaTime
-        if us_time < 5 * 60 then
-            us_tickets = math.ceil((us_time / (5 * 60)) * initial_tickets)
+
+    if PlayerManager:GetPlayerCount() > 0 then
+        if us_time ~= nil then
+            us_time = us_time - deltaTime
+            if us_time < 5 * 60 then
+                us_tickets = math.ceil((us_time / (5 * 60)) * initial_tickets)
+            end
         end
+    else
+        us_time = waypoints.get_initial_time()
     end
 
     if ru_tickets ~= nil then
