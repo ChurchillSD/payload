@@ -27,6 +27,8 @@ Events:Subscribe('Level:Loaded', function(levelName, gameMode)
                 -- Adding offset to the cp
                 cp_trans = cp_trans + cp[3]
             end
+            -- Put the flag in the ground to work around flag only moving client-side
+            cp_trans.y = cp_trans.y - 1.5
 
             -- Changing location of waypoint
             cp_obj_data:MakeWritable()
@@ -38,6 +40,30 @@ Events:Subscribe('Level:Loaded', function(levelName, gameMode)
             )
         
             cp_obj_data.blueprintTransform = cp_pos
+        end
+
+        -- Set all capture points to non-capturable
+        local iterator = EntityManager:GetIterator('ServerCapturePointEntity')
+        local entity = iterator:Next()
+        while entity ~= nil do
+            entity = CapturePointEntity(entity)
+
+            local name = tostring(entity.name)
+
+            local cp_letter = string.sub(name, string.len(name) - 1)
+
+            if cp_letter ~= "HQ" then
+                -- This is a capture point, NOT an HQ :)
+
+                local entity_data = CapturePointEntityData(entity.data)
+                entity_data:MakeWritable()
+
+                entity.team = TeamId.Team2
+                entity.isControlled = true
+                entity.isCaptureEnabled = false
+            end
+
+            entity = iterator:Next()
         end
     end
 
