@@ -1,5 +1,9 @@
 local M = {}
 
+-- MP Lake
+
+mp_subway_initial_time = 60 * 3
+
 mp_subway_waypoints_test = {
     Vec3(68.460938, 64.001755, 257.929688),
     Vec3(64.051994, 64.016411, 249.195313),
@@ -10,10 +14,11 @@ mp_subway_waypoints_test = {
     Vec3(-17.376080, 66.672722, 158.306732)
 }
 
+-- {Waypoint index, GUID of flag, Position offset, Time to capture (seconds)}
 mp_subway_cps_test = {
-    {2, Guid("5C3EEC89-4314-4714-8423-1D10A0270458")},
-    {3, Guid("2A95E4F4-9A86-44BF-9285-07B75A05B137"), Vec3(0,0,-20)},
-    {4, Guid("03611A2B-666A-45E7-B1D6-FFB87F2370FD")}
+    {2, Guid("5C3EEC89-4314-4714-8423-1D10A0270458"), Vec3(0, 0, 0), 60 * 2},
+    {3, Guid("2A95E4F4-9A86-44BF-9285-07B75A05B137"), Vec3(0, 0,-20), 60 * 2},
+    {4, Guid("03611A2B-666A-45E7-B1D6-FFB87F2370FD"), Vec3(0, 0, 0), 60 * 2}
 }
 
 mp_subway_waypoints = {
@@ -38,10 +43,14 @@ mp_subway_waypoints = {
 }
 
 mp_subway_cps = {
-    {6, Guid("5C3EEC89-4314-4714-8423-1D10A0270458")},
-    {12, Guid("2A95E4F4-9A86-44BF-9285-07B75A05B137"), Vec3(0,0,-20)},
-    {18, Guid("03611A2B-666A-45E7-B1D6-FFB87F2370FD")}
+    {6, Guid("5C3EEC89-4314-4714-8423-1D10A0270458"), Vec3(0, 0, 0), 60 * 2},
+    {12, Guid("2A95E4F4-9A86-44BF-9285-07B75A05B137"), Vec3(0, 0,-20), 60 * 2},
+    {18, Guid("03611A2B-666A-45E7-B1D6-FFB87F2370FD"), Vec3(0, 0, 0), 60 * 2}
 }
+
+-- MP_013
+
+mp_013_initial_time = 60 * 3
 
 mp_013_waypoints = {
     Vec3(-15.961914, 214.941208, 43.548828),
@@ -51,6 +60,21 @@ mp_013_waypoints = {
 }
 
 mp_013_cps = nil
+
+function M.get_initial_time()
+    initial_time = nil
+
+    local levelName = SharedUtils:GetLevelName()
+    local gameMode = SharedUtils:GetCurrentGameMode()
+    -- MP_Lake NOT METRO! TODO: Make sure this is MP lake not default metro
+    if (levelName == "Levels/MP_Subway/MP_Subway" or levelName == "MP_Subway") and gameMode == "ConquestSmall0" then
+        initial_time = mp_subway_initial_time
+    elseif (levelName == "Levels/MP_013/MP_013" or levelName == "MP_013") and gameMode == "ConquestSmall0" then
+        initial_time = mp_013_initial_time
+    end
+
+    return initial_time
+end
 
 function M.get_cps()
     local cps = nil

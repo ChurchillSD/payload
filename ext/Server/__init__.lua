@@ -55,6 +55,9 @@ Events:Subscribe('Engine:Update', function(deltaTime, simulationDeltaTime)
         time_ui_update = 0
     end
 
+    -- Update the payload tickets
+    common.update_tickets(deltaTime)
+
 end)
 
 -- Create the payload

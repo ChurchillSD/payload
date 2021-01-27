@@ -14,13 +14,15 @@ payload_entity = nil
 payload_transform = nil
 
 waypoint_index = 1
+capturepoint_index = 0
 payload_waypoints = nil
 payload_capturepoints = nil
 payload_total_dist = nil
 
 -- This has to be hardcoded: TicketManager:GetTicketCount() isn't working!
 initial_tickets = 350
-current_tickets = initial_tickets
+ru_tickets = initial_tickets
+us_time = nil
 
 function calculate_total_dist()
     local prev = payload_waypoints[1]
@@ -97,6 +99,10 @@ function M.update_payload_server(num_players_near, simulationDeltaTime)
         num_players_near = payload_max_pushers
     end
 
+    if num_players_near > 0 and us_time == nil then
+        us_time = waypoints.get_initial_time()
+    end
+
     dist_per_sec = payload_basespeed + (num_players_near * payload_speed_bonus)
 
     local previous_payload_trans = payload_transform.trans:Clone()
@@ -118,20 +124,43 @@ function M.update_payload_server(num_players_near, simulationDeltaTime)
             payload_capturepoints = waypoints.get_cps()
         end
 
-        -- Update tickets
+        -- Update tickets and time
+        local old_cp_index = capturepoint_index
         local total_cps = #payload_capturepoints
-        local captured_cps = 0
-        for _, cp in ipairs(payload_capturepoints) do
+        for i, cp in ipairs(payload_capturepoints) do
             if cp[1] <= waypoint_index then
-                captured_cps = captured_cps + 1
+                capturepoint_index = i
             end
         end
 
-        current_tickets = math.ceil(initial_tickets * (1 - (captured_cps / total_cps)))
+        if old_cp_index ~= capturepoint_index then
+            -- Capture point has been taken
+
+            -- Update US time
+            us_time = us_time + payload_capturepoints[capturepoint_index][4]
+            -- Capture the flag!
+            -- TODO
+        end
+
+        ru_tickets = math.ceil(initial_tickets * (1 - (capturepoint_index / total_cps)))
+    end
+end
+
+function M.update_tickets(deltaTime)
+    -- Call this function every engine update
+
+
+    local us_tickets = initial_tickets
+    if us_time ~= nil then
+        us_time = us_time - deltaTime
+        if us_time < 5 * 60 then
+            us_tickets = math.ceil((us_time / (5 * 60)) * initial_tickets)
+        end
     end
 
-    if current_tickets ~= nil then
-        TicketManager:SetTicketCount(TeamId.Team2, current_tickets)
+    if ru_tickets ~= nil then
+        TicketManager:SetTicketCount(TeamId.Team2, ru_tickets)
+        TicketManager:SetTicketCount(TeamId.Team1, us_tickets)
     end
 end
 
