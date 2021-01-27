@@ -131,6 +131,25 @@ function update_pushing_status(payload_pos, payload_blocked, payload_moving_back
     }
 }
 
+function update_track(payload_pos, ctx){
+    ctx.moveTo(TRACK_START_POS, TRACK_Y_POS);
+    ctx.lineTo(payload_pos[0], TRACK_Y_POS);
+    if(team_name == "US"){
+        ctx.strokeStyle = ATTACKERS_PROGRESS_COLOR;
+        ctx.shadowColor = ATTACKERS_PROGRESS_GLOW;
+    } else {
+        ctx.strokeStyle = DEFENDERS_PROGRESS_COLOR;
+        ctx.shadowColor = DEFENDERS_PROGRESS_GLOW; 
+    }
+    ctx.lineWidth = TRACK_THICKNESS;
+    ctx.lineCap = 'round';
+    ctx.shadowBlur = TRACK_GLOW;
+    ctx.stroke();
+
+    // Reset shadowcolor
+    ctx.shadowColor = "transparent";
+}
+
 // Get waypoint positions on payload ui track
 function get_waypoint_positions(cp_numbers, waypoint_dists, dist_per_pixel){
     waypoint_positions = [];
