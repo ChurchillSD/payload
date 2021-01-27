@@ -2,7 +2,7 @@ local M = {}
 
 -- MP Lake
 
-mp_subway_initial_time = 60 * 3
+mp_subway_initial_time = 60 * 8
 
 mp_subway_waypoints_test = {
     Vec3(68.460938, 64.001755, 257.929688),
@@ -50,7 +50,7 @@ mp_subway_cps = {
 
 -- MP_013
 
-mp_013_initial_time = 60 * 3
+mp_013_initial_time = 60 * 8
 
 mp_013_waypoints = {
     Vec3(-15.961914, 214.941208, 43.548828),
