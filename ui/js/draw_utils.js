@@ -94,8 +94,6 @@ function draw_waypoints(position, ctx){
         var up_arrow_img = document.getElementById("Arrow_Up_" + waypoint_info.color);
         var up_arrow_img_height = up_arrow_img.clientHeight;
         var up_arrow_img_width = up_arrow_img.clientWidth;
-        console.log(up_arrow_img_width)
-        console.log(up_arrow_img_height)
         var up_arrow_position = [(waypoint_positions[i][0] - (up_arrow_img_width/2)), current_waypoint_position[1] - (up_arrow_img_height)]
 
         // Draw waypoint and arrow
@@ -104,20 +102,33 @@ function draw_waypoints(position, ctx){
     }
 }
 
-// Draws the current number of pushers and if the payload is blocked or not
-function draw_pushing_status(payload_pos, payload_blocked, number_of_pushers, ctx){
-    var status_text = "";
-    if (payload_blocked){
-        status_text = "Payload Blocked.";
-    } else if (!payload_blocked && (number_of_pushers > 0)) {
-        status_text = number_of_pushers.toString() + "\n>>";
-    } else {
-        document.getElementById("data1").innerText = "Payload chilling out.";
-    }
+// Draws the psuhing status using blue and red arrows above the payload. More pushers more arrows!
+function draw_pushing_status(ctx, payload_pos, arrow_img, number_of_pushers){
+    // TODO: Add code to allow multiple arrows bassed on number of pushers
+    arrow_width = arrow_img.clientWidth
+    arrow_height = arrow_img.clientHeight
+    ctx.drawImage(arrow_img, (payload_pos[0] - ((arrow_width/2) - INDICATOR_ARROW_X_OFFSET)), (payload_pos[1] - INDICATOR_ARROW_Y_OFFSET));
+}
 
-    // Writing payload status
-    ctx.font = "15px Arial";
-    ctx.fillText(status_text,payload_pos[0], 10);
+
+// Draws the current direction payload is moving with arrows
+function update_pushing_status(payload_pos, payload_blocked, payload_moving_backwards, number_of_pushers, ctx){
+    var status_text = "";
+    if (!payload_blocked && (number_of_pushers > 0)) {
+        if(team_name == "US"){
+            arrow_img = document.getElementById("Arrow_Right_Blue");
+        } else {
+            arrow_img = document.getElementById("Arrow_Right_Red");
+        }
+        draw_pushing_status(ctx, payload_pos, arrow_img, number_of_pushers)
+    } else if(payload_moving_backwards){
+        if(team_name == "US"){
+            arrow_img = document.getElementById("Arrow_Left_Red");
+        } else {
+            arrow_img = document.getElementById("Arrow_Left_Blue");
+        }
+        draw_pushing_status(ctx, payload_pos, arrow_img, 1)
+    }
 }
 
 // Get waypoint positions on payload ui track

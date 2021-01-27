@@ -1,3 +1,6 @@
+// Globals
+previous_distance_moved = 0
+
 window.init_UI = function(data)
 {
     // TODO: assin team_name global
@@ -25,15 +28,24 @@ window.init_UI = function(data)
 
 window.update_UI = function(data)
 {                
-    clear_canvas(dynamic_ctx)
 
+    // Check if payload moving backwards
+    var payload_moving_backwards = false
+    if (data.dist_moved < previous_distance_moved){
+        payload_moving_backwards = true;
+    }
+    previous_distance_moved = data.dist_moved;
+
+    // Update the payload position on UI using total distance moved
     if(dist_per_pixel != null){
         payload_pos[0] = (data.dist_moved/dist_per_pixel) + TRACK_START_POS; //Offset
     }
 
+    // Clear the dynamic canvas
+    clear_canvas(dynamic_ctx)
+
+    // Update dynamic elements
     draw_waypoints(payload_pos, dynamic_ctx)
-
-    draw_pushing_status(payload_pos, data.payload_blocked, data.attckers_pushing, dynamic_ctx)
-
     draw_payload(payload_pos, dynamic_ctx, data.payload_blocked, data.attckers_pushing)
+    update_pushing_status(payload_pos, data.payload_blocked, payload_moving_backwards, data.attckers_pushing, dynamic_ctx)
 };
