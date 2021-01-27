@@ -14,7 +14,7 @@ Events:Subscribe('Level:Loaded', function(levelName, gameMode)
     end
 
     if payload_capturepoints ~= nil then
-        for _, cp in pairs(payload_capturepoints) do
+        for _, cp in ipairs(payload_capturepoints) do
             local wp_index = cp[1]
             local cp_guid = cp[2]
 

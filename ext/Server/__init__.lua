@@ -61,9 +61,16 @@ end)
 Events:Subscribe('Level:Loaded', function(levelName, gameMode)
     NetEvents:Broadcast('reset_payload')
     common.reset_payload_vars()
-    
+
     print("Creating payload")
-    common.create_payload('Server')
+    local payload_active = common.create_payload('Server')
+
+    if payload_active then
+        print("Payload mod enabled.")
+        ServerUtils:SetCustomGameModeName("Payload")
+
+        -- TODO - Subscribe events HERE
+    end
 end)
 
 -- Get raycast result from client and update payload position
@@ -86,7 +93,7 @@ Events:Subscribe('Player:Chat', function(player, recipientMask, message)
 
         -- entity_data.initialOwnerTeam = TeamId.Team1
 
-        entity.team = TeamId.Team1
+        entity.team = TeamId.Team2
         entity.isControlled = true
         entity.flagVelocity = 0.000000
         entity.flagLocation = 100

@@ -16,6 +16,20 @@ payload_transform = nil
 waypoint_index = 1
 payload_waypoints = nil
 payload_capturepoints = nil
+payload_total_dist = nil
+
+-- This has to be hardcoded: TicketManager:GetTicketCount() isn't working!
+initial_tickets = 350
+current_tickets = initial_tickets
+
+function calculate_total_dist()
+    local prev = payload_waypoints[1]
+    payload_total_dist = 0
+    for i = 2, #payload_waypoints do
+        payload_total_dist = payload_total_dist + prev:Distance(payload_waypoints[i])
+        prev = payload_waypoints[i]
+    end
+end
 
 function M.create_payload(client_or_server, updated_transform)
     -- Get the waypoints for the current map
@@ -24,6 +38,7 @@ function M.create_payload(client_or_server, updated_transform)
     end
 
     if payload_waypoints ~= nil then
+        calculate_total_dist()
         -- Creating entity
         local payloadData = ResourceManager:SearchForInstanceByGuid(Guid(payload_GUID))
 
@@ -54,7 +69,12 @@ function M.create_payload(client_or_server, updated_transform)
             print("Yoda: Lost an enitiy Master Obi-Wan has. How embarrassing.")
         end
 
+        -- Payload mod is active, return true
+        return true
     end
+
+    -- Payload mod doesn't work for this map, return False
+    return false
 end
 
 -- Move towards Vec3
@@ -93,8 +113,26 @@ function M.update_payload_server(num_players_near, simulationDeltaTime)
         if waypoint_index ~= #payload_waypoints - 1 then
             waypoint_index = waypoint_index + 1
         end
+
+        if payload_capturepoints == nil then
+            payload_capturepoints = waypoints.get_cps()
+        end
+
+        -- Update tickets
+        local total_cps = #payload_capturepoints
+        local captured_cps = 0
+        for _, cp in ipairs(payload_capturepoints) do
+            if cp[1] <= waypoint_index then
+                captured_cps = captured_cps + 1
+            end
+        end
+
+        current_tickets = math.ceil(initial_tickets * (1 - (captured_cps / total_cps)))
     end
 
+    if current_tickets ~= nil then
+        TicketManager:SetTicketCount(TeamId.Team2, current_tickets)
+    end
 end
 
 function M.move_payload(client_or_server, transform)
