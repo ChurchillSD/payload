@@ -156,7 +156,7 @@ function M.update_payload_server(num_players_near, simulationDeltaTime, conteste
     end
 
     if time_since_last_push > 30 and payload_total_dist_moved > 0 then
-        dist_per_sec = -payload_basespeed / 2
+        dist_per_sec = payload_basespeed / 2
     end
 
     if contested then
@@ -169,13 +169,22 @@ function M.update_payload_server(num_players_near, simulationDeltaTime, conteste
 
     local previous_payload_trans = payload_transform.trans:Clone()
 
-    -- Get new trans for the payload
-    payload_transform.trans = move_towards_lin(payload_transform.trans, next_wp, (dist_per_sec * simulationDeltaTime)) -- payload_transform.trans:MoveTowards(next_wp, delta)
-
+    -- If payload going back
     if time_since_last_push > 30 then
+        payload_transform.trans = move_towards_lin(payload_transform.trans, prev_wp, (dist_per_sec * simulationDeltaTime)) -- payload_transform.trans:MoveTowards(next_wp, delta)
+
+        if payload_transform.trans == prev_wp then
+            if waypoint_index == 1 then
+                payload_total_dist_moved = 0
+            else
+                waypoint_index = waypoint_index - 1
+            end
+        end
         -- Update total distance moved
         payload_total_dist_moved = payload_total_dist_moved - (payload_transform.trans:Distance(previous_payload_trans))
     else
+        -- Get new trans for the payload
+        payload_transform.trans = move_towards_lin(payload_transform.trans, next_wp, (dist_per_sec * simulationDeltaTime)) -- payload_transform.trans:MoveTowards(next_wp, delta)
         payload_total_dist_moved = payload_total_dist_moved + (payload_transform.trans:Distance(previous_payload_trans))
     end
 
@@ -305,7 +314,7 @@ function M.move_payload(client_or_server, transform)
             previous_ground = ground
             transform.trans = ground.position
         end
-        
+
         -- Update the server to the new payload position.
         NetEvents:Send('PayloadPosition', ground.position)
     end
