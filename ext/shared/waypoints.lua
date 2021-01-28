@@ -27,6 +27,7 @@ mp_subway_waypoints = {
     Vec3(-86.134766, 69.036911, -6.958268)
 }
 
+-- {Waypoint_index, GUID, Offset, Time added when captured, spawnable}
 mp_subway_cps = {
     {6, Guid("5C3EEC89-4314-4714-8423-1D10A0270458"), Vec3(0, 0, 0), 60 * 2},
     {12, Guid("2A95E4F4-9A86-44BF-9285-07B75A05B137"), Vec3(0, 0,-20), 60 * 2},
