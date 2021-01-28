@@ -60,9 +60,6 @@ function M.create_payload(client_or_server, updated_transform)
                 -- Set default position of payload to starting position
                 payload_transform.trans = payload_waypoints[1] -- Start position
             end
-
-            print("Payload transform")
-            print(payload_transform)
             
             -- Create payload entity at position of payload transfrom
             payload_entity = EntityManager:CreateEntity(payloadData, payload_transform)
