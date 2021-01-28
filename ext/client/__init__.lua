@@ -8,7 +8,6 @@ NetEvents:Subscribe('msg_move_payload', function(data)
 end)
 
 NetEvents:Subscribe('reset_payload', function(data)
-    print("Here?")
     common.reset_payload_vars()
 end)
 
@@ -23,6 +22,21 @@ end)
 Events:Subscribe('Extension:Loaded', function()
     print("Loading payload UI")
     WebUI:Init()
+end)
+
+NetEvents:Subscribe('update_captured_cps', function(capturepoint_index)
+    cp_current_capture_state[capturepoint_index] = 1;
+end)
+
+Events:Subscribe('Soldier:Spawn', function(soldier)
+    local team_name = player_utils.get_team_name()
+    spawn_cp_index = player_utils.get_spawn_cp_index(team_name)
+
+    if spawn_cp_index ~= 0 then
+        spawn_point_pos = payload_spawnpoints[team_name][spawn_cp_index][ math.random( #payload_spawnpoints[team_name][spawn_cp_index] ) ]
+
+        NetEvents:Send('MovePlayer', spawn_point_pos.trans)
+    end
 end)
 
 Events:Subscribe('Engine:Update', function(deltaTime, simulationDeltaTime)

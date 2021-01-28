@@ -1,3 +1,5 @@
+spawnpoints_file = require('__shared/spawnpoints')
+
 local M = {}
 
 -- MP Lake
@@ -29,9 +31,9 @@ mp_subway_waypoints = {
 
 -- {Waypoint_index, GUID, Offset, Time added when captured, spawnable}
 mp_subway_cps = {
-    {6, Guid("5C3EEC89-4314-4714-8423-1D10A0270458"), Vec3(0, 0, 0), 60 * 2},
-    {12, Guid("2A95E4F4-9A86-44BF-9285-07B75A05B137"), Vec3(0, 0,-20), 60 * 2},
-    {20, Guid("03611A2B-666A-45E7-B1D6-FFB87F2370FD"), Vec3(0, 0, 0), 60 * 2}
+    {6, Guid("5C3EEC89-4314-4714-8423-1D10A0270458"), Vec3(0, 0, 0), 60 * 2, true},
+    {12, Guid("2A95E4F4-9A86-44BF-9285-07B75A05B137"), Vec3(0, 0,-20), 60 * 2, true},
+    {20, Guid("03611A2B-666A-45E7-B1D6-FFB87F2370FD"), Vec3(0, 0, 0), 60 * 2, false}
 }
 
 -- MP_013
@@ -75,6 +77,19 @@ function M.get_cps()
     end
 
     return cps
+end
+
+function M.get_spawn_postions()
+    local spawn_positons = nil
+
+    local levelName = SharedUtils:GetLevelName()
+    local gameMode = SharedUtils:GetCurrentGameMode()
+    -- MP_Lake NOT METRO! TODO: Make sure this is MP lake not default metro
+    if (levelName == "Levels/MP_Subway/MP_Subway" or levelName == "MP_Subway") and gameMode == "ConquestSmall0" then
+        spawn_positons = mp_subway_spawn_points
+    end
+    
+    return spawn_positons
 end
 
 function M.get_waypoints()

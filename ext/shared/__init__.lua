@@ -13,6 +13,10 @@ Events:Subscribe('Level:Loaded', function(levelName, gameMode)
         payload_waypoints = waypoints.get_waypoints()
     end
 
+    if payload_spawnpoints == nil then
+        payload_spawnpoints = waypoints.get_spawn_postions()
+    end
+
     if payload_capturepoints ~= nil then
         for _, cp in ipairs(payload_capturepoints) do
             local wp_index = cp[1]

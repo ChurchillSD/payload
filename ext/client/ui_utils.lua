@@ -1,22 +1,8 @@
 common = require('__shared/common')
 waypoints = require("__shared/waypoints")
+player_utils = require("player_utils")
 
 local M = {}
-
-function get_team_name()
-    local client_player = PlayerManager:GetLocalPlayer()
-    local team_name = "US"
-
-    if client_player ~= nil then 
-        if client_player.teamId == 1 then
-            team_name = "US"
-        else
-            team_name = "RU"
-        end
-    end
-
-    return team_name
-end
 
 function get_payload_world_to_screen()
     local payload_world_to_screen = Vec2(-1, -1)
@@ -40,7 +26,7 @@ function get_distance_from_player_to_payload()
     local dist_to_payload = 0
     local localPlayer = PlayerManager:GetLocalPlayer()
     
-    if localPlayer ~= nil then
+    if localPlayer ~= nil and payload_transform ~= nil then
         if localPlayer.soldier ~= nil and localPlayer.soldier.alive then
             -- Get players dist from payload
             local player_trans = localPlayer.soldier.worldTransform.trans
@@ -69,7 +55,7 @@ end
 
 -- Updates the UI elements
 NetEvents:Subscribe('update_ui', function(payload_total_dist_moved, payload_blocked, attackers_near_cart, time_left)
-    local team_name = get_team_name()
+    local team_name = player_utils.get_team_name()
 
     local ui_info = {
         ["dist_moved"] = payload_total_dist_moved, 
@@ -103,7 +89,7 @@ function M.initialise_UI()
     local waypoint_distances = {}
     waypoint_distances = M.get_distances(payload_waypoints)
 
-    local team_name = get_team_name()
+    local team_name = player_utils.get_team_name()
 
     -- Send waypoint info to UI to generate track HUD element
     local data = {
