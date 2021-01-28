@@ -31,6 +31,8 @@ payload_capturepoints = nil
 payload_spawnpoints = nil
 payload_total_dist = nil
 
+time_since_last_push = nil
+
 -- {"A", "B", "C", "D", "E", "F", "G"}
 -- 1: Owned by US, 2: Owned by RU
 cp_current_capture_state = {2, 2, 2, 2, 2, 2, 2}
@@ -134,9 +136,28 @@ function M.update_payload_server(num_players_near, simulationDeltaTime)
     if num_players_near > 0 and us_time == nil then
         us_time = waypoints.get_initial_time()
         us_max_time = us_time
+        time_since_last_push = 0
     end
 
-    dist_per_sec = payload_basespeed + (num_players_near * payload_speed_bonus)
+    if num_players_near > 0 then
+        time_since_last_push = 0
+    end
+
+    time_since_last_push += simulationDeltaTime
+
+    dist_per_sec = 0
+
+    if num_players_near > 0 then
+        dist_per_sec = payload_basespeed + (num_players_near * payload_speed_bonus)
+    end
+
+    if time_since_last_push > 30 then
+        dist_per_sec = -payload_basespeed / 2
+    end
+
+    if dist_per_sec == 0 then
+        return false
+    end
 
     local previous_payload_trans = payload_transform.trans:Clone()
 
@@ -208,6 +229,8 @@ function M.update_payload_server(num_players_near, simulationDeltaTime)
 
         ru_tickets = math.ceil(initial_tickets * (1 - (capturepoint_index / total_cps)))
     end
+
+    return true
 end
 
 function M.update_tickets(deltaTime)

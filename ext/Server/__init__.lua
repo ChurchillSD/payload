@@ -32,10 +32,14 @@ Events:Subscribe('Engine:Update', function(deltaTime, simulationDeltaTime)
         local payload_blocked = false;
 
         -- If no defenders near and at least one attacker near cart, then move cart
-        if (attackers_near_cart > 0) and (defenders_near_cart == 0) then
-            -- Update payload transform from waypoints
-            common.update_payload_server(attackers_near_cart, simulationDeltaTime)
+        if defenders_near_cart > 0 then
+            attackers_near_cart = 0
+        end
 
+        -- Update payload transform from waypoints
+        local moved = common.update_payload_server(attackers_near_cart, simulationDeltaTime)
+
+        if moved then
             -- Move payload on Client then Server
             NetEvents:Broadcast('msg_move_payload', payload_transform)
             common.move_payload('Server', payload_transform)
