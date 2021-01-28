@@ -92,10 +92,10 @@ NetEvents:Subscribe('PayloadPosition', function(player, data)
 end)
 
 -- Moves the player
-NetEvents:Subscribe('MovePlayer', function(player, new_pos, client_player)
-    if client_player ~= nil then
+NetEvents:Subscribe('MovePlayer', function(player, new_pos)
+    if player ~= nil then
         -- Move the player to the new position
-        client_player.soldier:SetPosition(new_pos)
+        player.soldier:SetPosition(new_pos)
     else
         print("Could not find current player!")
     end

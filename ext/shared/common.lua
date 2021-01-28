@@ -196,7 +196,8 @@ function M.update_payload_server(num_players_near, simulationDeltaTime)
                     entity.team = TeamId.Team1
 
                     -- Let the client which point has just been captured
-                    NetEvents:Broadcast('update_captured_cps', capturepoint_index)
+                    cp_current_capture_state[capturepoint_index] = 1;
+                    NetEvents:Broadcast('update_captured_cps', cp_current_capture_state)
                     break
                 end
 
