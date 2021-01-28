@@ -53,6 +53,7 @@ Events:Subscribe('Engine:Update', function(deltaTime, simulationDeltaTime)
         if time_ui_update > 0.1 then
             NetEvents:Broadcast('update_ui', payload_total_dist_moved, payload_blocked, attackers_near_cart, us_time)
             time_ui_update = 0
+            NetEvents:Broadcast('update_captured_cps', cp_current_capture_state)
         end
 
         -- Update the payload tickets
