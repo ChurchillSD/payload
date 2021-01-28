@@ -55,8 +55,11 @@ function draw_payload_esp(payload_screen_pos, dist_to_payload){
                 var payload_esp_size = get_payload_esp_size(dist_to_payload)
                 payload_esp_img.width = payload_esp_size[0]
                 payload_esp_img.height = payload_esp_size[1]
-                payload_esp_img.style.left= Math.round(payload_screen_pos[0]).toString() + "px";
-                payload_esp_img.style.top= Math.round(payload_screen_pos[1]).toString() + "px";
+
+                var esp_x_pos = Math.round(payload_screen_pos[0]) - (payload_esp_img.width/2)
+                var esp_y_pos = Math.round(payload_screen_pos[1]) - (payload_esp_img.height/2)
+                payload_esp_img.style.left=  esp_x_pos.toString() + "px";
+                payload_esp_img.style.top= esp_y_pos.toString() + "px";
             }
         }
     }
