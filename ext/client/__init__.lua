@@ -31,11 +31,11 @@ end)
 Events:Subscribe('Soldier:Spawn', function(soldier)
     local team_name = player_utils.get_team_name()
     spawn_cp_index = player_utils.get_spawn_cp_index(team_name)
-
+    local client_player = PlayerManager:GetLocalPlayer()
     if spawn_cp_index ~= 0 then
         spawn_point_pos = payload_spawnpoints[team_name][spawn_cp_index][ math.random( #payload_spawnpoints[team_name][spawn_cp_index] ) ]
 
-        NetEvents:Send('MovePlayer', spawn_point_pos.trans)
+        NetEvents:Send('MovePlayer', spawn_point_pos.trans, client_player)
     end
 end)
 
