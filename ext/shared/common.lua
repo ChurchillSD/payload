@@ -4,8 +4,15 @@ waypoints = require("__shared/waypoints")
 local M = {}
 
 -- payload_GUID = "67E1E7E3-0E50-11DE-84F5-B01842D7E41E" -- Car
-payload_GUID = "86109A07-8794-11E0-9345-9992712BCB5C" -- Bag
-payload_basespeed = 20 --1.2 -- Measured in dist per second
+
+-- payload_GUID = "86109A07-8794-11E0-9345-9992712BCB5C" -- Bag
+
+-- payload_GUID = "044E1D7D-5F11-4F8A-A574-7887E29EF128" -- Luxury Car
+-- payload_GUID = "67E1E7E3-0E50-11DE-84F5-B01842D7E41E" -- Civilian Car 01
+--payload_GUID = "044E1D7D-5F11-4F8A-A574-7887E29EF128" -- Car on fire next to tree
+-- payload_GUID = "C412F8F3-3E85-11E0-BCB1-8B4B61244BA9" -- Vending Machine
+-- payload_GUID = "86109A07-8794-11E0-9345-9992712BCB5C" -- Bag
+payload_basespeed = 1.2 -- Measured in dist per second
 payload_speed_bonus = 0.12 -- Measured in dist per second
 payload_max_pushers = 5 -- Maximum people pushing the cart before payload speed is capped
 payload_push_radius = 5 -- Area around the payload that counts as pushing it.
@@ -54,9 +61,13 @@ function M.create_payload(client_or_server, updated_transform)
     if payload_waypoints ~= nil then
         calculate_total_dist()
         -- Creating entity
-        local payloadData = ResourceManager:SearchForInstanceByGuid(Guid(payload_GUID))
+        -- local payloadData = ResourceManager:SearchForInstanceByGuid(Guid(payload_GUID))
 
-        if payloadData ~= nil then
+        local dataContainer = ResourceManager:SearchForDataContainer("Props/Vehicles/LuxuryCar_01/LuxuryCar_01_MP")
+        print(dataContainer)
+        local payload_blueprint = ObjectBlueprint(dataContainer)
+
+        if payload_blueprint ~= nil then
             payload_transform = LinearTransform()
             
             -- If transform has been passed in to function use that instead.
@@ -68,14 +79,20 @@ function M.create_payload(client_or_server, updated_transform)
             end
             
             -- Create payload entity at position of payload transfrom
-            payload_entity = EntityManager:CreateEntity(payloadData, payload_transform)
+            -- payload_entity = EntityManager:CreateEntity(payloadData, payload_transform)
+            payload_entity = EntityManager:CreateEntitiesFromBlueprint(payload_blueprint, payload_transform)
             
             -- Make on Client or Server depending on who called this function
             if payload_entity ~= nil then
                 if client_or_server == 'Client' then
-                    payload_entity:Init(Realm.Realm_Client, true)
+                    for i, entity in pairs(payload_entity.entities) do
+                        entity:Init(Realm.Realm_Client, true)
+                    end
+                    -- payload_entity:Init(Realm.Realm_Client, true)
                 else
-                    payload_entity:Init(Realm.Realm_Server, true)
+                    for i, entity in pairs(payload_entity.entities) do
+                        entity:Init(Realm.Realm_Server, true)
+                    end
                 end
             end
         else
@@ -241,11 +258,25 @@ function M.move_payload(client_or_server, transform)
     
     -- IF payload exists move it
     if payload_entity ~= nil then
+        print("Attempting to move entity!")
+        print(payload_transform)
+        local spatial_entity = SpatialEntity(payload_entity.entities[1])
+        -- if client_or_server == "Server" then
+        --     local spatial_entity = SpatialEntity(payload_entity.entities[1])
+        -- else
+        --     for i, entity in pairs(payload_entity.entities) do
+        --         print(tostring(i) .. tostring(entity))
+        --     end
+        --     local spatial_entity = SpatialEntity(payload_entity.entities[1])
+        -- end
+        -- entity:Init(Realm.Realm_Client, true)
         -- To move the entity, we must first cast it to a SpatialEntity
-        local spacial_payload = SpatialEntity(payload_entity)
+        -- local spatial_entity = SpatialEntity(entity)
 
         -- Move the payload
-        spacial_payload.transform = transform
+        spatial_entity.transform = transform
+		spatial_entity:FireEvent('Disable')
+		spatial_entity:FireEvent('Enable')
 
         -- Update payload Transform
         payload_transform = transform:Clone()
