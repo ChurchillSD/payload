@@ -4,23 +4,6 @@ local M = {}
 
 mp_subway_initial_time = 60 * 8
 
-mp_subway_waypoints_test = {
-    Vec3(68.460938, 64.001755, 257.929688),
-    Vec3(64.051994, 64.016411, 249.195313),
-    Vec3(51.451172, 64.837692, 224.428711),
-    Vec3(51.941666, 65.006683, 213.125977),
-    Vec3(33.117165, 66.355301, 203.879898),
-    Vec3(2.720718, 69.782074, 195.614212),
-    Vec3(-17.376080, 66.672722, 158.306732)
-}
-
--- {Waypoint index, GUID of flag, Position offset, Time to capture (seconds)}
-mp_subway_cps_test = {
-    {2, Guid("5C3EEC89-4314-4714-8423-1D10A0270458"), Vec3(0, 0, 0), 60 * 2},
-    {3, Guid("2A95E4F4-9A86-44BF-9285-07B75A05B137"), Vec3(0, 0,-20), 60 * 2},
-    {4, Guid("03611A2B-666A-45E7-B1D6-FFB87F2370FD"), Vec3(0, 0, 0), 60 * 2}
-}
-
 mp_subway_waypoints = {
     Vec3(63.617180, 64.236229, 243.782471),
     Vec3(53.322258, 64.798630, 221.321259),
@@ -39,13 +22,15 @@ mp_subway_waypoints = {
     Vec3(-47.373764, 68.944160, 21.098633),
     Vec3(-50.951904, 69.880753, 8.688473),
     Vec3(-58.056641, 69.360184, 0.241210),
-    Vec3(-71.295898, 69.110191, -2.915039)
+    Vec3(-71.017578, 69.111130, 0.749023),
+    Vec3(-78.626007, 69.111145, -0.509766),
+    Vec3(-86.134766, 69.036911, -6.958268)
 }
 
 mp_subway_cps = {
     {6, Guid("5C3EEC89-4314-4714-8423-1D10A0270458"), Vec3(0, 0, 0), 60 * 2},
     {12, Guid("2A95E4F4-9A86-44BF-9285-07B75A05B137"), Vec3(0, 0,-20), 60 * 2},
-    {18, Guid("03611A2B-666A-45E7-B1D6-FFB87F2370FD"), Vec3(0, 0, 0), 60 * 2}
+    {20, Guid("03611A2B-666A-45E7-B1D6-FFB87F2370FD"), Vec3(0, 0, 0), 60 * 2}
 }
 
 -- MP_013
@@ -83,7 +68,6 @@ function M.get_cps()
     local gameMode = SharedUtils:GetCurrentGameMode()
     -- MP_Lake NOT METRO! TODO: Make sure this is MP lake not default metro
     if (levelName == "Levels/MP_Subway/MP_Subway" or levelName == "MP_Subway") and gameMode == "ConquestSmall0" then
-        -- cps = mp_subway_cps_test
         cps = mp_subway_cps
     elseif (levelName == "Levels/MP_013/MP_013" or levelName == "MP_013") and gameMode == "ConquestSmall0" then
         cps = mp_013_cps
