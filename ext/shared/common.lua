@@ -155,7 +155,7 @@ function M.update_payload_server(num_players_near, simulationDeltaTime)
         dist_per_sec = payload_basespeed + (num_players_near * payload_speed_bonus)
     end
 
-    if time_since_last_push > 30 then
+    if time_since_last_push > 30 and payload_total_dist_moved > 0 then
         dist_per_sec = -payload_basespeed / 2
     end
 
