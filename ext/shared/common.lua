@@ -22,6 +22,8 @@ payload_total_dist_moved = 0
 payload_entity = nil
 payload_transform = nil
 
+previous_ground = nil
+
 waypoint_index = 1
 capturepoint_index = 0
 payload_waypoints = nil
@@ -248,7 +250,12 @@ function M.move_payload(client_or_server, transform)
 
         -- Get current pos and make it 1 unit above its current pos.
         local from = transform.trans:Clone()
-        from.y = from.y + 1
+
+        if previous_ground ~= nil then
+            from.y = previous_ground.position.y + 0.2
+        else
+            from.y = from.y + 0.3
+        end
 
         -- Get current pos and set y to 0 - i.e a point way below it
         local to = transform.trans:Clone()
@@ -256,7 +263,7 @@ function M.move_payload(client_or_server, transform)
 
         -- Raycast from the point above the ground to the point below the ground.
         local ground = RaycastManager:Raycast(from, to, RayCastFlags.DontCheckCharacter)
-
+        previous_ground = ground
         -- Update the server to the new payload position.
         transform.trans = ground.position
         NetEvents:Send('PayloadPosition', ground.position)
