@@ -331,11 +331,7 @@ function M.move_payload(client_or_server, transform)
 
         -- Update payload Transform
         payload_transform = transform:Clone()
-    else
-        -- Create new payload at updated position.
-        transform_new = LinearTransform()
-        transform_new.trans = transform.trans
-        M.create_payload(client_or_server, transform_new)
+
     end
 end
 
