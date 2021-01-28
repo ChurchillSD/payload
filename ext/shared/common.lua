@@ -243,7 +243,7 @@ function M.move_payload(client_or_server, transform)
 
         -- Get current pos and make it 1 unit above its current pos.
         local from = transform.trans:Clone()
-        from.y = from.y + 1
+        from.y = from.y + 0.5
 
         -- Get current pos and set y to 0 - i.e a point way below it
         local to = transform.trans:Clone()
