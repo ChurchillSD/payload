@@ -68,7 +68,7 @@ function M.create_payload(client_or_server, updated_transform)
         -- Creating entity
         -- local payloadData = ResourceManager:SearchForInstanceByGuid(Guid(payload_GUID))
 
-        local dataContainer = ResourceManager:SearchForDataContainer("Props/Vehicles/LuxuryCar_01/LuxuryCar_01_MP")
+        local dataContainer = ResourceManager:SearchForDataContainer("Props/DestructionProps/ConcreteWeight_01/ConcreteWeight_01")
         print(dataContainer)
         local payload_blueprint = ObjectBlueprint(dataContainer)
 
@@ -92,6 +92,14 @@ function M.create_payload(client_or_server, updated_transform)
                 if client_or_server == 'Client' then
                     for i, entity in pairs(payload_entity.entities) do
                         entity:Init(Realm.Realm_Client, true)
+
+                        print(entity.typeInfo.name)
+
+                        if entity:Is('ClientPhysicsEntity') or entity:Is('ServerPhysicsEntity') then
+                            print("Setting damage callback...")
+                            PhysicsEntity(entity).internalHealth = 90000000000000
+                            PhysicsEntity(entity):RegisterDamageCallback(function() print("here"); return false end)
+                        end
                     end
                     -- payload_entity:Init(Realm.Realm_Client, true)
                 else
