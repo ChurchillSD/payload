@@ -25,39 +25,39 @@ function players_near_cart(team_number)
 end
 
 Events:Subscribe('Engine:Update', function(deltaTime, simulationDeltaTime)
+    if payload_transform ~= nil then
+        -- Get players near cart on both team
+        local attackers_near_cart = players_near_cart(1) -- Us
+        local defenders_near_cart = players_near_cart(2) -- Ru
+        local payload_blocked = false;
 
-    -- Get players near cart on both team
-    local attackers_near_cart = players_near_cart(1) -- Us
-    local defenders_near_cart = players_near_cart(2) -- Ru
-    local payload_blocked = false;
+        -- If no defenders near and at least one attacker near cart, then move cart
+        if (attackers_near_cart > 0) and (defenders_near_cart == 0) then
+            -- Update payload transform from waypoints
+            common.update_payload_server(attackers_near_cart, simulationDeltaTime)
 
-    -- If no defenders near and at least one attacker near cart, then move cart
-    if (attackers_near_cart > 0) and (defenders_near_cart == 0) then
-        -- Update payload transform from waypoints
-        common.update_payload_server(attackers_near_cart, simulationDeltaTime)
+            -- Move payload on Client then Server
+            NetEvents:Broadcast('msg_move_payload', payload_transform)
+            common.move_payload('Server', payload_transform)
+        end
 
-        -- Move payload on Client then Server
-        NetEvents:Broadcast('msg_move_payload', payload_transform)
-        common.move_payload('Server', payload_transform)
+        -- Is payload blocked by defenders
+        if (defenders_near_cart > 0) and (attackers_near_cart > 0) then
+            payload_blocked = true
+        else
+            payload_blocked = false
+        end
+
+        -- Update UI 10 times a sec I think lol
+        time_ui_update = time_ui_update + simulationDeltaTime
+        if time_ui_update > 0.1 then
+            NetEvents:Broadcast('update_ui', payload_total_dist_moved, payload_blocked, attackers_near_cart, us_time)
+            time_ui_update = 0
+        end
+
+        -- Update the payload tickets
+        common.update_tickets(deltaTime)
     end
-
-    -- Is payload blocked by defenders
-    if (defenders_near_cart > 0) and (attackers_near_cart > 0) then
-        payload_blocked = true
-    else
-        payload_blocked = false
-    end
-
-    -- Update UI 10 times a sec I think lol
-    time_ui_update = time_ui_update + simulationDeltaTime
-    if time_ui_update > 0.1 then
-        NetEvents:Broadcast('update_ui', payload_total_dist_moved, payload_blocked, attackers_near_cart, us_time)
-        time_ui_update = 0
-    end
-
-    -- Update the payload tickets
-    common.update_tickets(deltaTime)
-
 end)
 
 -- Create the payload
