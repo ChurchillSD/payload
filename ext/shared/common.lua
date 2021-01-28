@@ -259,9 +259,18 @@ function M.move_payload(client_or_server, transform)
     
     -- IF payload exists move it
     if payload_entity ~= nil then
-        print("Attempting to move entity!")
-        print(payload_transform)
-        local spatial_entity = SpatialEntity(payload_entity.entities[1])
+
+        for i, entity in pairs(payload_entity.entities) do
+            if string.ends(entity.typeInfo.name, "StaticModelEntity") then
+                local spatial_entity = SpatialEntity(entity)
+
+                -- Move the payload
+                spatial_entity.transform = transform
+                spatial_entity:FireEvent('Disable')
+                spatial_entity:FireEvent('Enable')
+                break
+            end
+        end
         -- if client_or_server == "Server" then
         --     local spatial_entity = SpatialEntity(payload_entity.entities[1])
         -- else
@@ -274,10 +283,6 @@ function M.move_payload(client_or_server, transform)
         -- To move the entity, we must first cast it to a SpatialEntity
         -- local spatial_entity = SpatialEntity(entity)
 
-        -- Move the payload
-        spatial_entity.transform = transform
-		spatial_entity:FireEvent('Disable')
-		spatial_entity:FireEvent('Enable')
 
         -- Update payload Transform
         payload_transform = transform:Clone()
