@@ -16,7 +16,7 @@ local M = {}
 payload_basespeed = 1.2 -- Measured in dist per second
 payload_speed_bonus = 0.12 -- Measured in dist per second
 payload_max_pushers = 5 -- Maximum people pushing the cart before payload speed is capped
-payload_push_radius = 5 -- Area around the payload that counts as pushing it.
+payload_push_radius = 10 -- Area around the payload that counts as pushing it.
 
 payload_total_dist_moved = 0
 payload_entity = nil
