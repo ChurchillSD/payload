@@ -23,6 +23,7 @@ payload_total_dist = nil
 initial_tickets = 350
 ru_tickets = initial_tickets
 us_time = nil
+us_max_time = nil
 
 function calculate_total_dist()
     local prev = payload_waypoints[1]
@@ -106,6 +107,7 @@ function M.update_payload_server(num_players_near, simulationDeltaTime)
 
     if num_players_near > 0 and us_time == nil then
         us_time = waypoints.get_initial_time()
+        us_max_time = us_time
     end
 
     dist_per_sec = payload_basespeed + (num_players_near * payload_speed_bonus)
@@ -150,6 +152,7 @@ function M.update_payload_server(num_players_near, simulationDeltaTime)
 
             -- Update US time
             us_time = us_time + payload_capturepoints[capturepoint_index][4]
+            us_max_time = us_time
             -- Capture the flag!
             local cp_indexes = {"A", "B", "C", "D", "E", "F", "G"}
             local iterator = EntityManager:GetIterator('ServerCapturePointEntity')
@@ -180,16 +183,12 @@ end
 
 function M.update_tickets(deltaTime)
     -- Call this function every engine update
-
-
     local us_tickets = initial_tickets
 
     if PlayerManager:GetPlayerCount() > 0 then
         if us_time ~= nil then
             us_time = us_time - deltaTime
-            if us_time < 5 * 60 then
-                us_tickets = math.ceil((us_time / (5 * 60)) * initial_tickets)
-            end
+            us_tickets = math.ceil((us_time / us_max_time) * initial_tickets)
         end
     else
         us_time = waypoints.get_initial_time()
