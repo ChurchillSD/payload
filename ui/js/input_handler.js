@@ -33,6 +33,7 @@ window.update_UI = function(data)
 {                
     team_name = data.team_name
     time_left = data.time_left
+    dist_to_payload = data.dist_to_payload
 
     payload_screen_pos = [data.payload_x, data.payload_y]
     
@@ -53,9 +54,10 @@ window.update_UI = function(data)
 
     // Update dynamic canvas elements
     draw_waypoints(payload_pos, dynamic_ctx)
-    draw_payload(payload_pos, payload_screen_pos, dynamic_ctx, data.payload_blocked, data.attckers_pushing)
     update_pushing_status(payload_pos, data.payload_blocked, payload_moving_backwards, data.attckers_pushing, dynamic_ctx)
     update_track(payload_pos, dynamic_ctx)
+    draw_payload(payload_pos, dynamic_ctx, payload_screen_pos, dist_to_payload, data.payload_blocked, data.attckers_pushing)
+
 
     // Update time left
     if (typeof time_left !== "undefined"){

@@ -18,13 +18,48 @@ function get_team_name()
     return team_name
 end
 
-NetEvents:Subscribe('update_ui', function(payload_total_dist_moved, payload_blocked, attackers_near_cart, time_left)
-    local payload_world_to_screen = Vec2(1,1)
+function get_payload_world_to_screen()
+    local payload_world_to_screen = Vec2(-1, -1)
+
     if payload_transform ~= nil then
-        payload_world_to_screen = ClientUtils:WorldToScreen(payload_transform.trans)
+        -- Make the esp marker 1m above the current payload position
+        local payload_marker_transform = payload_transform.trans:Clone()
+        payload_marker_transform.y = payload_marker_transform.y + 3
+
+        print(payload_marker_transform)
+        payload_world_to_screen = ClientUtils:WorldToScreen(payload_marker_transform)
     end
 
+    -- Payload not on screen
+    if payload_world_to_screen == nil then
+        payload_world_to_screen = Vec2(-1, -1)
+    end
+
+    return payload_world_to_screen
+end
+
+function get_distance_from_player_to_payload()
+    local dist_to_payload = 0
+    local localPlayer = PlayerManager:GetLocalPlayer()
+    
+    if localPlayer ~= nil then
+        if localPlayer.soldier ~= nil and localPlayer.soldier.alive then
+            -- Get players dist from payload
+            local player_trans = localPlayer.soldier.worldTransform.trans
+            dist_to_payload = player_trans:Distance(payload_transform.trans)
+        end
+    end
+
+    return dist_to_payload
+end
+
+
+NetEvents:Subscribe('update_ui', function(payload_total_dist_moved, payload_blocked, attackers_near_cart, time_left)
+
+    local payload_world_to_screen = get_payload_world_to_screen()
     local team_name = get_team_name()
+
+    local dist_to_payload = get_distance_from_player_to_payload()
 
     local ui_info = {
         ["dist_moved"] = payload_total_dist_moved, 
@@ -33,7 +68,8 @@ NetEvents:Subscribe('update_ui', function(payload_total_dist_moved, payload_bloc
         ["team_name"] = team_name,
         ["time_left"] = time_left,
         ["payload_x"] = payload_world_to_screen.x,
-        ["payload_y"] = payload_world_to_screen.y
+        ["payload_y"] = payload_world_to_screen.y,
+        ["dist_to_payload"] = dist_to_payload
     }
 
     local dataJson = json.encode(ui_info)

@@ -26,3 +26,8 @@ const INDICATOR_ARROW_X_OFFSET = 2
 
 // Waypoint vars
 const WAYPOINT_Y_OFFSET = 160;
+
+// Payload ESP
+ESP_IMG_MAX_SIZE = [60,60]
+ESP_IMG_MIN_SIZE = [40,40]
+ESP_MAX_DIST = 400

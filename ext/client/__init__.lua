@@ -6,6 +6,7 @@ NetEvents:Subscribe('msg_move_payload', function(data)
 end)
 
 NetEvents:Subscribe('reset_payload', function(data)
+    print("Here?")
     common.reset_payload_vars()
 end)
 

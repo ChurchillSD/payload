@@ -19,6 +19,9 @@ img {
     visibility: hidden;
 }
 
+body {
+    overflow:hidden;
+}
 
 #time_left_box {
     text-align: center;
@@ -28,6 +31,11 @@ img {
 
 .inline{
     display: inline;
+}
+
+#payload_esp {
+    position:absolute;
+    transition: left 0.2s, top 0.2s;
 }
 
 .glow{

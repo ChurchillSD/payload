@@ -24,16 +24,51 @@ function clear_canvas(ctx) {
     ctx.beginPath();
 }
 
-// Draws payload esp on screen
-function draw_payload_esp(payload_screen_pos, payload_img, ctx){
+function get_payload_esp_size(dist_to_payload){
+    var width = ESP_IMG_MAX_SIZE[0] * (1 - dist_to_payload/ESP_MAX_DIST)
+    var height = ESP_IMG_MAX_SIZE[1] * (1 - dist_to_payload/ESP_MAX_DIST)
+
+    if (width < ESP_IMG_MIN_SIZE[0]){
+        width = ESP_IMG_MIN_SIZE[0]
+    }
+
+    if (height < ESP_IMG_MIN_SIZE[1]){
+        height = ESP_IMG_MIN_SIZE[1]
+    }
+
+    return ([width, height])
+}
+
+// Draws payload esp on screen Does not work
+function draw_payload_esp(payload_screen_pos, dist_to_payload, payload_img){
+    payload_esp_img = document.getElementById('payload_esp')
+
+    // Setting to the correct src img
+    payload_esp_img.src = payload_img.src
+
+    var payload_on_screen = false
     if (typeof payload_screen_pos !== "undefined"){
-        console.log(payload_screen_pos)
-        ctx.drawImage(payload_img, payload_screen_pos[0], payload_screen_pos[1]);
+        if (payload_screen_pos[0] != -1){
+            if ((payload_screen_pos[0] < window.screen.width) && (payload_screen_pos[1] < window.screen.height)){
+                payload_on_screen = true
+                var payload_esp_size = get_payload_esp_size(dist_to_payload)
+                payload_esp_img.width = payload_esp_size[0]
+                payload_esp_img.height = payload_esp_size[1]
+                payload_esp_img.style.left= Math.round(payload_screen_pos[0]).toString() + "px";
+                payload_esp_img.style.top= Math.round(payload_screen_pos[1]).toString() + "px";
+            }
+        }
+    }
+
+    if (!payload_on_screen){
+        payload_esp_img.style.visibility = 'hidden';
+    } else {
+        payload_esp_img.style.visibility = 'visible';
     }
 }
 
 // Draws payload on UI
-function draw_payload(position, payload_screen_pos, ctx, payload_blocked, attckers_pushing){
+function draw_payload(position, ctx, payload_screen_pos, dist_to_payload, payload_blocked, attckers_pushing){
     var img = document.getElementById("payload_neutral");
 
     if(team_name == "US"){
@@ -59,7 +94,7 @@ function draw_payload(position, payload_screen_pos, ctx, payload_blocked, attcke
     var img_height = img.clientHeight;
     var img_width = img.clientWidth;
 
-    draw_payload_esp(payload_screen_pos, img, ctx)
+    draw_payload_esp(payload_screen_pos, dist_to_payload, img)
     ctx.drawImage(img, (position[0] - (img_width/2)),(position[1] - (img_height/2)));
 }
 

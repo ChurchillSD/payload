@@ -53,13 +53,16 @@ function M.create_payload(client_or_server, updated_transform)
         if payloadData ~= nil then
             payload_transform = LinearTransform()
             
-            -- Set default position of payload to starting position
-            payload_transform.trans = payload_waypoints[1] -- Start position
-            
             -- If transform has been passed in to function use that instead.
             if updated_transform ~= nil then
                 payload_transform = updated_transform
+            else 
+                -- Set default position of payload to starting position
+                payload_transform.trans = payload_waypoints[1] -- Start position
             end
+
+            print("Payload transform")
+            print(payload_transform)
             
             -- Create payload entity at position of payload transfrom
             payload_entity = EntityManager:CreateEntity(payloadData, payload_transform)
@@ -224,8 +227,11 @@ function M.move_payload(client_or_server, transform)
         -- To move the entity, we must first cast it to a SpatialEntity
         local spacial_payload = SpatialEntity(payload_entity)
 
-        -- Move the bag
+        -- Move the payload
         spacial_payload.transform = transform
+
+        -- Update payload Transform
+        payload_transform = transform:Clone()
     else
         -- Create new payload at updated position.
         transform_new = LinearTransform()
