@@ -60,7 +60,7 @@ window.update_UI = function(data)
     draw_waypoints(payload_pos, dynamic_ctx)
     update_pushing_status(payload_pos, data.payload_blocked, payload_moving_backwards, data.attckers_pushing, dynamic_ctx)
     update_track(payload_pos, dynamic_ctx)
-    draw_payload(payload_pos, dynamic_ctx, payload_screen_pos, dist_to_payload, data.payload_blocked, data.attckers_pushing)
+    draw_payload(payload_pos, dynamic_ctx, data.payload_blocked, data.attckers_pushing, payload_moving_backwards)
 
 
     // Update time left
