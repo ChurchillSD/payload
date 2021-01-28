@@ -123,7 +123,7 @@ function move_towards_lin(from, to, max)
     return new_vec
 end
 
-function M.update_payload_server(num_players_near, simulationDeltaTime)
+function M.update_payload_server(num_players_near, simulationDeltaTime, contested)
     local prev_wp = payload_waypoints[waypoint_index]
     local next_wp = payload_waypoints[waypoint_index + 1]
     local dist_per_sec = payload_basespeed -- Base payload distance to move each tick.
@@ -143,7 +143,7 @@ function M.update_payload_server(num_players_near, simulationDeltaTime)
         time_since_last_push = 0
     end
 
-    if num_players_near > 0 then
+    if num_players_near > 0 and not contested then
         time_since_last_push = 0
     end
 
@@ -157,6 +157,10 @@ function M.update_payload_server(num_players_near, simulationDeltaTime)
 
     if time_since_last_push > 30 and payload_total_dist_moved > 0 then
         dist_per_sec = -payload_basespeed / 2
+    end
+
+    if contested then
+        dist_per_sec = 0
     end
 
     if dist_per_sec == 0 then
