@@ -5,7 +5,7 @@ local M = {}
 
 -- payload_GUID = "67E1E7E3-0E50-11DE-84F5-B01842D7E41E" -- Car
 payload_GUID = "86109A07-8794-11E0-9345-9992712BCB5C" -- Bag
-payload_basespeed = 20 --1.2 -- Measured in dist per second
+payload_basespeed = 1.2 -- Measured in dist per second
 payload_speed_bonus = 0.12 -- Measured in dist per second
 payload_max_pushers = 5 -- Maximum people pushing the cart before payload speed is capped
 payload_push_radius = 5 -- Area around the payload that counts as pushing it.
