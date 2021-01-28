@@ -194,7 +194,7 @@ function M.update_tickets(deltaTime)
     local us_tickets = initial_tickets
 
     if PlayerManager:GetPlayerCount() > 0 then
-        if us_time ~= nil and us_max_time ~= nil and (us_tickets > 0 and ru_tickets > 0) then
+        if us_time ~= nil and us_max_time ~= nil and us_tickets > 0 and ru_tickets > 0 then
             us_time = us_time - deltaTime
             us_tickets = math.ceil((us_time / us_max_time) * initial_tickets)
         end
@@ -209,7 +209,7 @@ function M.update_tickets(deltaTime)
 
     -- Game ended reset payload mod
     if us_tickets < 0 or ru_tickets < 0 then
-        NetEvents:Send('reset_payload', ground.position)
+        NetEvents:Send('reset_payload')
     end
 
     if ru_tickets ~= nil then

@@ -72,6 +72,7 @@ Events:Subscribe('Level:Loaded', function(levelName, gameMode)
         print("Payload mod enabled.")
         ServerUtils:SetCustomGameModeName("Payload")
 
+        no_pre_round()
         -- TODO - Subscribe events HERE
     end
 end)
@@ -113,7 +114,7 @@ Events:Subscribe('Partition:Loaded', function(partition)
 	end
 end)
 
-Events:Subscribe('Level:Loaded', function()
+function no_pre_round()
 
 	-- This is for Conquest tickets etc.
 	local ticketCounterIterator = EntityManager:GetIterator("ServerTicketCounterEntity")
@@ -184,4 +185,4 @@ Events:Subscribe('Level:Loaded', function()
 		end
 		eventGateEntity = eventGateIterator:Next()
 	end
-end)
+end
