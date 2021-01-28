@@ -72,11 +72,11 @@ function draw_payload_esp(payload_screen_pos, dist_to_payload){
 }
 
 // Draws payload on UI
-function draw_payload(position, ctx, payload_screen_pos, dist_to_payload, payload_blocked, attckers_pushing){
+function draw_payload(position, ctx, payload_blocked, attckers_pushing, payload_moving_backwards){
     current_payload_img = document.getElementById("payload_neutral");
 
     if(team_name == "US"){
-        if(payload_blocked){
+        if(payload_blocked || payload_moving_backwards){
             current_payload_img = document.getElementById("payload_red");
         }
 
@@ -86,7 +86,7 @@ function draw_payload(position, ctx, payload_screen_pos, dist_to_payload, payloa
     }
 
     if(team_name == "RU"){
-        if(payload_blocked){
+        if(payload_blocked || payload_moving_backwards){
             current_payload_img = document.getElementById("payload_blue");
         }
 
