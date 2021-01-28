@@ -12,6 +12,7 @@ local M = {}
 --payload_GUID = "044E1D7D-5F11-4F8A-A574-7887E29EF128" -- Car on fire next to tree
 -- payload_GUID = "C412F8F3-3E85-11E0-BCB1-8B4B61244BA9" -- Vending Machine
 -- payload_GUID = "86109A07-8794-11E0-9345-9992712BCB5C" -- Bag
+-- payload_GUID = "86109A07-8794-11E0-9345-9992712BCB5C" -- Bag
 payload_basespeed = 1.2 -- Measured in dist per second
 payload_speed_bonus = 0.12 -- Measured in dist per second
 payload_max_pushers = 5 -- Maximum people pushing the cart before payload speed is capped
