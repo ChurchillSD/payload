@@ -33,7 +33,7 @@ mp_subway_waypoints = {
 mp_subway_cps = {
     {6, Guid("5C3EEC89-4314-4714-8423-1D10A0270458"), Vec3(0, 0, 0), 60 * 2, true},
     {12, Guid("2A95E4F4-9A86-44BF-9285-07B75A05B137"), Vec3(0, 0,-20), 60 * 2, true},
-    {20, Guid("03611A2B-666A-45E7-B1D6-FFB87F2370FD"), Vec3(0, 0, 0), 60 * 2, false}
+    {20, Guid("03611A2B-666A-45E7-B1D6-FFB87F2370FD"), Vec3(0, 0, 0), 0, false}
 }
 
 -- MP_013
@@ -88,7 +88,7 @@ function M.get_spawn_postions()
     if (levelName == "Levels/MP_Subway/MP_Subway" or levelName == "MP_Subway") and gameMode == "ConquestSmall0" then
         spawn_positons = mp_subway_spawn_points
     end
-    
+
     return spawn_positons
 end
 
