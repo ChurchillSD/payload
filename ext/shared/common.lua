@@ -43,7 +43,6 @@ function M.create_payload(client_or_server, updated_transform)
     -- Get the waypoints for the current map
     payload_waypoints = waypoints.get_waypoints()
     payload_capturepoints = waypoints.get_cps()
-    calculate_total_dist()
 
     if payload_waypoints ~= nil then
         calculate_total_dist()
