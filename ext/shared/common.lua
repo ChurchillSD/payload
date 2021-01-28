@@ -18,7 +18,12 @@ waypoint_index = 1
 capturepoint_index = 0
 payload_waypoints = nil
 payload_capturepoints = nil
+payload_spawnpoints = nil
 payload_total_dist = nil
+
+-- {"A", "B", "C", "D", "E", "F", "G"}
+-- 1: Owned by US, 2: Owned by RU
+cp_current_capture_state = {2, 2, 2, 2, 2, 2, 2}
 
 -- This has to be hardcoded: TicketManager:GetTicketCount() isn't working!
 initial_tickets = 350
@@ -168,8 +173,10 @@ function M.update_payload_server(num_players_near, simulationDeltaTime)
                 if cp_letter == cp_indexes[capturepoint_index] then
                     local entity_data = CapturePointEntityData(entity.data)
                     entity_data:MakeWritable()
-
                     entity.team = TeamId.Team1
+
+                    -- Let the client which point has just been captured
+                    NetEvents:Broadcast('update_captured_cps', capturepoint_index)
                     break
                 end
 
@@ -251,6 +258,7 @@ function M.reset_payload_vars()
     waypoint_index = 1
     payload_waypoints = nil
     payload_capturepoints = nil
+    cp_current_capture_state = {2, 2, 2, 2, 2, 2, 2}
 end
 
 return M

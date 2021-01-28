@@ -90,6 +90,16 @@ NetEvents:Subscribe('PayloadPosition', function(player, data)
     end
 end)
 
+-- Moves the player
+NetEvents:Subscribe('MovePlayer', function(player, new_pos)
+    if player ~= nil then
+        -- Move the player to the new position
+        player.soldier:SetPosition(new_pos)
+    else
+        print("Could not find current player!")
+    end
+end)
+
 -- Events:Subscribe('Player:Chat', function(player, recipientMask, message)
 --     -- Capture all the points
 --     local iterator = EntityManager:GetIterator('ServerCapturePointEntity')
