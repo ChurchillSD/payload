@@ -238,6 +238,11 @@ function M.update_tickets(deltaTime)
 end
 
 function M.move_payload(client_or_server, transform)
+    -- Set transform forward based on waypoint positions
+    local prev_wp = payload_waypoints[waypoint_index]
+    local next_wp = payload_waypoints[waypoint_index + 1]
+    transform.forward = (next_wp - prev_wp):Normalize()
+
     -- Perform raycast on client to stick payload to ground
     if client_or_server == "Client" then
 
