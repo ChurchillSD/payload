@@ -200,6 +200,7 @@ function M.update_tickets(deltaTime)
         end
     else
         us_time = waypoints.get_initial_time()
+        us_max_time = us_time
     end
 
     if us_tickets < 0 then
