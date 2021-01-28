@@ -133,6 +133,10 @@ function M.update_payload_server(num_players_near, simulationDeltaTime)
         num_players_near = payload_max_pushers
     end
 
+    if time_since_last_push == nil then
+        time_since_last_push = 0
+    end
+
     if num_players_near > 0 and us_time == nil then
         us_time = waypoints.get_initial_time()
         us_max_time = us_time
@@ -143,7 +147,7 @@ function M.update_payload_server(num_players_near, simulationDeltaTime)
         time_since_last_push = 0
     end
 
-    time_since_last_push += simulationDeltaTime
+    time_since_last_push = time_since_last_push + simulationDeltaTime
 
     dist_per_sec = 0
 
@@ -164,8 +168,12 @@ function M.update_payload_server(num_players_near, simulationDeltaTime)
     -- Get new trans for the payload
     payload_transform.trans = move_towards_lin(payload_transform.trans, next_wp, (dist_per_sec * simulationDeltaTime)) -- payload_transform.trans:MoveTowards(next_wp, delta)
 
-    -- Update total distance moved
-    payload_total_dist_moved = payload_total_dist_moved + (payload_transform.trans:Distance(previous_payload_trans))
+    if time_since_last_push > 30 then
+        -- Update total distance moved
+        payload_total_dist_moved = payload_total_dist_moved - (payload_transform.trans:Distance(previous_payload_trans))
+    else
+        payload_total_dist_moved = payload_total_dist_moved + (payload_transform.trans:Distance(previous_payload_trans))
+    end
 
     -- Check if we have reached the next waypoint and update waypoint index
     if payload_transform.trans == next_wp then
