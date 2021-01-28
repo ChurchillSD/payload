@@ -73,5 +73,7 @@ window.update_UI = function(data)
         } 
         time_left_str = time_left_str + seconds.toString() + "s"
         document.getElementById("time_left").innerText =  time_left_str;
+    } else {
+        document.getElementById("time_left").innerText =  '';
     }
 };
