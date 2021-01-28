@@ -121,8 +121,11 @@ function M.update_payload_server(num_players_near, simulationDeltaTime)
     -- Check if we have reached the next waypoint and update waypoint index
     if payload_transform.trans == next_wp then
         -- Check if we are not at the last waypoint
+        local last_waypoint = false
         if waypoint_index ~= #payload_waypoints - 1 then
             waypoint_index = waypoint_index + 1
+        else
+            last_waypoint = true
         end
 
         if payload_capturepoints == nil then
@@ -136,6 +139,10 @@ function M.update_payload_server(num_players_near, simulationDeltaTime)
             if cp[1] <= waypoint_index then
                 capturepoint_index = i
             end
+        end
+
+        if last_waypoint then
+            capturepoint_index = #payload_capturepoints
         end
 
         if old_cp_index ~= capturepoint_index then
