@@ -300,9 +300,13 @@ function M.move_payload(client_or_server, transform)
 
         -- Raycast from the point above the ground to the point below the ground.
         local ground = RaycastManager:Raycast(from, to, RayCastFlags.DontCheckCharacter)
-        previous_ground = ground
+
+        if ground ~= nil then
+            previous_ground = ground
+            transform.trans = ground.position
+        end
+        
         -- Update the server to the new payload position.
-        transform.trans = ground.position
         NetEvents:Send('PayloadPosition', ground.position)
     end
     
