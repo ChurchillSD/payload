@@ -25,8 +25,6 @@ function get_payload_world_to_screen()
         -- Make the esp marker 1m above the current payload position
         local payload_marker_transform = payload_transform.trans:Clone()
         payload_marker_transform.y = payload_marker_transform.y + 3
-
-        print(payload_marker_transform)
         payload_world_to_screen = ClientUtils:WorldToScreen(payload_marker_transform)
     end
 
@@ -53,23 +51,32 @@ function get_distance_from_player_to_payload()
     return dist_to_payload
 end
 
-
-NetEvents:Subscribe('update_ui', function(payload_total_dist_moved, payload_blocked, attackers_near_cart, time_left)
-
+-- Draws the payload esp on screen
+function M.update_payload_esp()
     local payload_world_to_screen = get_payload_world_to_screen()
-    local team_name = get_team_name()
-
     local dist_to_payload = get_distance_from_player_to_payload()
+
+    local esp_info = {
+        ["payload_x"] = payload_world_to_screen.x,
+        ["payload_y"] = payload_world_to_screen.y,
+        ["dist_to_payload"] = dist_to_payload
+    }
+
+    local dataJson = json.encode(esp_info)
+
+    WebUI:ExecuteJS('update_ESP(' .. dataJson .. ');')
+end
+
+-- Updates the UI elements
+NetEvents:Subscribe('update_ui', function(payload_total_dist_moved, payload_blocked, attackers_near_cart, time_left)
+    local team_name = get_team_name()
 
     local ui_info = {
         ["dist_moved"] = payload_total_dist_moved, 
         ["payload_blocked"] = payload_blocked,
         ["attckers_pushing"] = attackers_near_cart,
         ["team_name"] = team_name,
-        ["time_left"] = time_left,
-        ["payload_x"] = payload_world_to_screen.x,
-        ["payload_y"] = payload_world_to_screen.y,
-        ["dist_to_payload"] = dist_to_payload
+        ["time_left"] = time_left
     }
 
     local dataJson = json.encode(ui_info)
@@ -77,6 +84,7 @@ NetEvents:Subscribe('update_ui', function(payload_total_dist_moved, payload_bloc
     WebUI:ExecuteJS('update_UI(' .. dataJson .. ');')
 end)
 
+-- Initalises the UI elements
 function M.initialise_UI()
     if payload_waypoints == nil then
         payload_waypoints = waypoints.get_waypoints()

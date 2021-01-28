@@ -29,13 +29,17 @@ window.init_UI = function(data)
     draw_payload(PAYLOAD_START_POS, dynamic_ctx)
 };
 
+window.update_ESP = function(data){
+    payload_screen_pos = [data.payload_x, data.payload_y]
+    dist_to_payload = data.dist_to_payload
+
+    draw_payload_esp(payload_screen_pos, dist_to_payload)
+}
+
 window.update_UI = function(data)
 {                
     team_name = data.team_name
     time_left = data.time_left
-    dist_to_payload = data.dist_to_payload
-
-    payload_screen_pos = [data.payload_x, data.payload_y]
     
     // Check if payload moving backwards
     var payload_moving_backwards = false

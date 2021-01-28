@@ -4,6 +4,7 @@ var payload_pos = PAYLOAD_START_POS;
 var waypoint_positions = [];
 var team_name = "US"; //"US" or "RU" 
 var time_left = 3.00;
+var current_payload_img = document.getElementById("payload_neutral");
 
 // Dynamic canvas
 var dynamic_payload_canvas = document.getElementById("dynamic_payload_canvas");
@@ -40,11 +41,11 @@ function get_payload_esp_size(dist_to_payload){
 }
 
 // Draws payload esp on screen Does not work
-function draw_payload_esp(payload_screen_pos, dist_to_payload, payload_img){
+function draw_payload_esp(payload_screen_pos, dist_to_payload){
     payload_esp_img = document.getElementById('payload_esp')
 
     // Setting to the correct src img
-    payload_esp_img.src = payload_img.src
+    payload_esp_img.src = current_payload_img.src
 
     var payload_on_screen = false
     if (typeof payload_screen_pos !== "undefined"){
@@ -69,33 +70,32 @@ function draw_payload_esp(payload_screen_pos, dist_to_payload, payload_img){
 
 // Draws payload on UI
 function draw_payload(position, ctx, payload_screen_pos, dist_to_payload, payload_blocked, attckers_pushing){
-    var img = document.getElementById("payload_neutral");
+    current_payload_img = document.getElementById("payload_neutral");
 
     if(team_name == "US"){
         if(payload_blocked){
-            img = document.getElementById("payload_red");
+            current_payload_img = document.getElementById("payload_red");
         }
 
         if(attckers_pushing > 0 && !payload_blocked){
-            img = document.getElementById("payload_blue");
+            current_payload_img = document.getElementById("payload_blue");
         }
     }
 
     if(team_name == "RU"){
         if(payload_blocked){
-            img = document.getElementById("payload_blue");
+            current_payload_img = document.getElementById("payload_blue");
         }
 
         if(attckers_pushing > 0 && !payload_blocked){
-            img = document.getElementById("payload_red");
+            current_payload_img = document.getElementById("payload_red");
         }
     }
 
-    var img_height = img.clientHeight;
-    var img_width = img.clientWidth;
+    var img_height = current_payload_img.clientHeight;
+    var img_width = current_payload_img.clientWidth;
 
-    draw_payload_esp(payload_screen_pos, dist_to_payload, img)
-    ctx.drawImage(img, (position[0] - (img_width/2)),(position[1] - (img_height/2)));
+    ctx.drawImage(current_payload_img, (position[0] - (img_width/2)),(position[1] - (img_height/2)));
 }
 
 // Gets the correct waypoint img and color for the current state/ team
